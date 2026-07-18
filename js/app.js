@@ -36,3 +36,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   initRecord(settings);
   initChart(settings);
 });
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/neko-water/service-worker.js");
+}
+

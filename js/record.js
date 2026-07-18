@@ -11,12 +11,14 @@ export function initRecord(settings) {
   const saveBtn = document.getElementById("saveBtn");
   const resultBox = document.getElementById("recordResult");
 
-  settings.cats.forEach(cat => {
-    const opt = document.createElement("option");
-    opt.value = cat;
-    opt.textContent = cat;
-    catSelect.appendChild(opt);
-  });
+const cats = loadCats();
+
+cats.forEach(cat => {
+  const opt = document.createElement("option");
+  opt.value = cat.name;
+  opt.textContent = cat.name;
+  catSelect.appendChild(opt);
+});
 
   settings.sources.forEach(src => {
     const opt = document.createElement("option");
