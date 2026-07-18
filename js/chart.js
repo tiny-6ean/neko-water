@@ -1,10 +1,8 @@
 export function initChart(settings) {
-console.log("settings in chart:", settings);
   const graphCat = document.getElementById("graphCat");
   const graphSource = document.getElementById("graphSource");
   const graphRange = document.getElementById("graphRange");
 
-  // ★猫は localStorage から読む
   const cats = JSON.parse(localStorage.getItem("cats") || "[]");
   cats.forEach(cat => {
     const opt = document.createElement("option");
@@ -13,7 +11,6 @@ console.log("settings in chart:", settings);
     graphCat.appendChild(opt);
   });
 
-  // ★飲水源は settings.json から読む
   settings.sources.forEach(src => {
     const opt = document.createElement("option");
     opt.value = src.name;
@@ -26,4 +23,8 @@ console.log("settings in chart:", settings);
   graphRange.addEventListener("change", drawChart);
 
   drawChart();
+}
+
+export function drawChart() {
+  // ★ここに豆さんの元の drawChart のコードをそのまま入れる
 }
