@@ -16,9 +16,7 @@ export function initRecord(settings) {
   const saveBtn = document.getElementById("saveBtn");
   const resultBox = document.getElementById("recordResult");
 
-  /* ------------------------------
-     猫リスト
-  ------------------------------ */
+  /* 猫リスト */
   const cats = loadCats();
   cats.forEach(cat => {
     const opt = document.createElement("option");
@@ -27,9 +25,7 @@ export function initRecord(settings) {
     catSelect.appendChild(opt);
   });
 
-  /* ------------------------------
-     飲水源リスト
-  ------------------------------ */
+  /* 飲水源リスト */
   settings.sources.forEach(src => {
     const opt = document.createElement("option");
     opt.value = src.name;
@@ -37,9 +33,7 @@ export function initRecord(settings) {
     sourceSelect.appendChild(opt);
   });
 
-  /* ------------------------------
-     飲水源選択時：蒸発補正と単位を反映
-  ------------------------------ */
+  /* 飲水源選択時：蒸発補正反映 */
   sourceSelect.addEventListener("change", () => {
     const src = settings.sources.find(s => s.name === sourceSelect.value);
     if (!src) return;
@@ -53,9 +47,7 @@ export function initRecord(settings) {
   evapInput.value = firstSource.evap;
   evapUnitSelect.value = firstSource.unit;
 
-  /* ------------------------------
-     記録処理（完全版）
-  ------------------------------ */
+  /* 記録処理（完全版） */
   saveBtn.addEventListener("click", () => {
 
     const cat = catSelect.value;
@@ -76,33 +68,27 @@ export function initRecord(settings) {
 
     const logs = loadLog();
 
-    /* 前回の重量を取得 */
+    /* 前回の重量 */
     const filtered = logs.filter(l => l.cat === cat && l.source === source);
     const prev = filtered.length ? filtered[filtered.length - 1].weight : null;
 
     /* 差分（単位は weightUnit と同じ） */
     const diff = prev !== null ? weight - prev : null;
 
-    /* ------------------------------
-       飲水量計算（完全版）
-    ------------------------------ */
+    /* 飲水量計算（単位対応） */
     let drink = null;
 
     if (diff !== null) {
 
-      // g / ml の場合 → diff と同じ単位で蒸発補正を引く
       if (evapUnit === "g" || evapUnit === "ml") {
         drink = diff - evap;
 
-      // ％の場合 → diff に対して割合で補正
       } else if (evapUnit === "percent") {
         drink = diff - (diff * (evap / 100));
       }
     }
 
-    /* ------------------------------
-       保存データ（完全版）
-    ------------------------------ */
+    /* 保存データ */
     const entry = {
       cat,
       source,
@@ -119,9 +105,7 @@ export function initRecord(settings) {
     logs.push(entry);
     saveLog(logs);
 
-    /* ------------------------------
-       表示（完全版）
-    ------------------------------ */
+    /* 表示 */
     resultBox.textContent =
       `${entry.date} / ${entry.cat} / ${entry.source}：` +
       `${entry.weight}${entry.weightUnit}（差分 ${entry.diff ?? "-"}${entry.weightUnit} / 飲水量 ${entry.drink ?? "-"}${entry.weightUnit}）`;
