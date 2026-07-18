@@ -21,6 +21,9 @@
   <button data-tab="settings">設定</button>
 </nav>
 
+<!-- ------------------------------
+     記録（完全版）
+------------------------------ -->
 <section id="record" class="tab-content">
   <h2>記録</h2>
 
@@ -33,24 +36,24 @@
   <label>計量写真（OCR）</label>
   <input type="file" id="photoInput" accept="image/*">
 
-<label>今日の総重量</label>
-<div style="display:flex; gap:8px; align-items:center;">
-  <input type="number" id="weightInput">
-  <select id="weightUnitSelect">
-    <option value="g">g</option>
-    <option value="ml">ml</option>
-  </select>
-</div>
+  <label>今日の総重量</label>
+  <div style="display:flex; gap:8px; align-items:center;">
+    <input type="number" id="weightInput">
+    <select id="weightUnitSelect">
+      <option value="g">g</option>
+      <option value="ml">ml</option>
+    </select>
+  </div>
 
-<label>蒸発補正</label>
-<div style="display:flex; gap:8px; align-items:center;">
-  <input type="number" id="evapInput">
-  <select id="evapUnitSelect">
-    <option value="g">g</option>
-    <option value="ml">ml</option>
-    <option value="percent">％</option>
-  </select>
-</div>
+  <label>蒸発補正</label>
+  <div style="display:flex; gap:8px; align-items:center;">
+    <input type="number" id="evapInput">
+    <select id="evapUnitSelect">
+      <option value="g">g</option>
+      <option value="ml">ml</option>
+      <option value="percent">％</option>
+    </select>
+  </div>
 
   <label>メモ</label>
   <input type="text" id="memoInput">
@@ -60,6 +63,9 @@
   <div id="recordResult" class="result-box"></div>
 </section>
 
+<!-- ------------------------------
+     ダッシュボード
+------------------------------ -->
 <section id="dashboard" class="tab-content">
   <h2>ダッシュボード</h2>
 
@@ -86,6 +92,9 @@
   </div>
 </section>
 
+<!-- ------------------------------
+     グラフ
+------------------------------ -->
 <section id="graph" class="tab-content">
   <h2>グラフ</h2>
 
@@ -105,6 +114,9 @@
   <canvas id="drinkChart"></canvas>
 </section>
 
+<!-- ------------------------------
+     分析
+------------------------------ -->
 <section id="analysis" class="tab-content">
   <h2>分析</h2>
 
@@ -124,6 +136,9 @@
   </div>
 </section>
 
+<!-- ------------------------------
+     設定
+------------------------------ -->
 <section id="settings" class="tab-content">
   <h2>設定</h2>
 
@@ -132,16 +147,16 @@
   <button id="addCatBtn">追加</button>
   <div id="catList"></div>
 
-<h3>飲水源の登録</h3>
-<input type="text" id="newSourceName" placeholder="飲水源名">
-<input type="number" id="newSourceEvap" placeholder="蒸発補正">
-<select id="newSourceUnit">
-  <option value="g">g</option>
-  <option value="ml">ml</option>
-  <option value="percent">％</option>
-</select>
-<button id="addSourceBtn">追加</button>
-<div id="sourceList"></div>
+  <h3>飲水源の登録</h3>
+  <input type="text" id="newSourceName" placeholder="飲水源名">
+  <input type="number" id="newSourceEvap" placeholder="蒸発補正">
+  <select id="newSourceUnit">
+    <option value="g">g</option>
+    <option value="ml">ml</option>
+    <option value="percent">％</option>
+  </select>
+  <button id="addSourceBtn">追加</button>
+  <div id="sourceList"></div>
 
   <h3>データ管理</h3>
   <button id="exportCSV">CSVエクスポート</button>
