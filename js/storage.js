@@ -72,3 +72,16 @@ export function importJSON(file) {
 
   reader.readAsText(file);
 }
+
+import { loadSettings } from "./storage.js";
+
+async function initSettings() {
+  try {
+    const settings = await loadSettings();
+    console.log("settings:", settings);
+  } catch (e) {
+    console.error("設定の読み込みに失敗:", e);
+  }
+}
+
+initSettings();
