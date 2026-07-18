@@ -7,12 +7,15 @@ export function initRecord(settings) {
   const sourceSelect = document.getElementById("sourceSelect");
   const weightInput = document.getElementById("weightInput");
   const evapInput = document.getElementById("evapInput");
+  const evapUnitSelect = document.getElementById("evapUnitSelect");
   const memoInput = document.getElementById("memoInput");
   const saveBtn = document.getElementById("saveBtn");
   const resultBox = document.getElementById("recordResult");
 
+  /* ------------------------------
+     猫リスト
+  ------------------------------ */
   const cats = loadCats();
-
   cats.forEach(cat => {
     const opt = document.createElement("option");
     opt.value = cat.name;
@@ -20,6 +23,9 @@ export function initRecord(settings) {
     catSelect.appendChild(opt);
   });
 
+  /* ------------------------------
+     飲水源リスト
+  ------------------------------ */
   settings.sources.forEach(src => {
     const opt = document.createElement("option");
     opt.value = src.name;
@@ -27,20 +33,32 @@ export function initRecord(settings) {
     sourceSelect.appendChild(opt);
   });
 
+  /* ------------------------------
+     飲水源選択時：蒸発補正と単位を反映
+  ------------------------------ */
   sourceSelect.addEventListener("change", () => {
     const src = settings.sources.find(s => s.name === sourceSelect.value);
-    evapInput.value = src ? src.evap : 0;
+    if (!src) return;
+
+    evapInput.value = src.evap;
+    evapUnitSelect.value = src.unit;
   });
 
+  // 初期値
   const firstSource = settings.sources[0];
   evapInput.value = firstSource.evap;
+  evapUnitSelect.value = firstSource.unit;
 
+  /* ------------------------------
+     記録処理（単位対応）
+  ------------------------------ */
   saveBtn.addEventListener("click", () => {
 
     const cat = catSelect.value;
     const source = sourceSelect.value;
     const weight = Number(weightInput.value);
     const evap = Number(evapInput.value || 0);
+    const unit = evapUnitSelect.value;
     const memo = memoInput.value;
 
     if (!weight) {
@@ -50,12 +68,27 @@ export function initRecord(settings) {
 
     const logs = loadLog();
 
+    /* 前回の重量を取得 */
     const filtered = logs.filter(l => l.cat === cat && l.source === source);
     const prev = filtered.length ? filtered[filtered.length - 1].weight : null;
     const diff = prev !== null ? weight - prev : null;
 
-    const drink = diff !== null ? diff + evap : null;
+    /* ------------------------------
+       単位ごとの飲水量計算
+    ------------------------------ */
+    let drink = null;
 
+    if (diff !== null) {
+      if (unit === "g" || unit === "ml") {
+        drink = diff - evap;
+      } else if (unit === "percent") {
+        drink = diff - (diff * (evap / 100));
+      }
+    }
+
+    /* ------------------------------
+       保存データ
+    ------------------------------ */
     const entry = {
       cat,
       source,
@@ -64,15 +97,19 @@ export function initRecord(settings) {
       diff,
       drink,
       evap,
+      unit,
       memo
     };
 
     logs.push(entry);
     saveLog(logs);
 
+    /* ------------------------------
+       表示
+    ------------------------------ */
     resultBox.textContent =
       `${entry.date} / ${entry.cat} / ${entry.source}：` +
-      `${entry.weight} g（差分 ${entry.diff ?? "-"} g / 飲水量 ${entry.drink ?? "-"} g）`;
+      `${entry.weight} g（差分 ${entry.diff ?? "-"} g / 飲水量 ${entry.drink ?? "-"} ${unit}）`;
 
     analyzeToday(logs, settings);
     updateDashboard(logs, settings);

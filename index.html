@@ -33,11 +33,21 @@
   <label>計量写真（OCR）</label>
   <input type="file" id="photoInput" accept="image/*">
 
-  <label>今日の総重量 (g)</label>
-  <input type="number" id="weightInput">
+  <label>今日の総重量</label>
+  <div style="display:flex; gap:8px; align-items:center;">
+    <input type="number" id="weightInput">
+    <span>g</span>
+  </div>
 
-  <label>蒸発補正 (g)</label>
-  <input type="number" id="evapInput">
+  <label>蒸発補正</label>
+  <div style="display:flex; gap:8px; align-items:center;">
+    <input type="number" id="evapInput">
+    <select id="evapUnitSelect">
+      <option value="g">g</option>
+      <option value="ml">ml</option>
+      <option value="percent">％</option>
+    </select>
+  </div>
 
   <label>メモ</label>
   <input type="text" id="memoInput">
@@ -121,7 +131,12 @@
 
   <h3>飲水源の登録</h3>
   <input type="text" id="newSourceName" placeholder="飲水源名">
-  <input type="number" id="newSourceEvap" placeholder="蒸発補正 (g)">
+  <input type="number" id="newSourceEvap" placeholder="蒸発補正">
+  <select id="newSourceUnit">
+    <option value="g">g</option>
+    <option value="ml">ml</option>
+    <option value="percent">％</option>
+  </select>
   <button id="addSourceBtn">追加</button>
   <div id="sourceList"></div>
 
