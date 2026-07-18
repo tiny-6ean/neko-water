@@ -9,7 +9,7 @@ export function saveLog(data) {
 }
 
 export async function loadSettings() {
-  const res = await fetch("../data/settings.json");
+  const res = await fetch("./data/settings.json");
   const json = await res.json();
   return json;
 }
