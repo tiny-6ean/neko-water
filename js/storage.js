@@ -77,6 +77,7 @@ const CAT_KEY = "cats";
 
 export function loadCats() {
   return JSON.parse(localStorage.getItem(CAT_KEY) || "[]");
+  return data ? JSON.parse(data) : [];
 }
 
 export function saveCats(data) {
