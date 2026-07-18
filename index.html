@@ -39,15 +39,15 @@
     <span>g</span>
   </div>
 
-  <label>蒸発補正</label>
-  <div style="display:flex; gap:8px; align-items:center;">
-    <input type="number" id="evapInput">
-    <select id="evapUnitSelect">
-      <option value="g">g</option>
-      <option value="ml">ml</option>
-      <option value="percent">％</option>
-    </select>
-  </div>
+<label>蒸発補正</label>
+<div style="display:flex; gap:8px; align-items:center;">
+  <input type="number" id="evapInput">
+  <select id="evapUnitSelect">
+    <option value="g">g</option>
+    <option value="ml">ml</option>
+    <option value="percent">％</option>
+  </select>
+</div>
 
   <label>メモ</label>
   <input type="text" id="memoInput">
@@ -129,16 +129,16 @@
   <button id="addCatBtn">追加</button>
   <div id="catList"></div>
 
-  <h3>飲水源の登録</h3>
-  <input type="text" id="newSourceName" placeholder="飲水源名">
-  <input type="number" id="newSourceEvap" placeholder="蒸発補正">
-  <select id="newSourceUnit">
-    <option value="g">g</option>
-    <option value="ml">ml</option>
-    <option value="percent">％</option>
-  </select>
-  <button id="addSourceBtn">追加</button>
-  <div id="sourceList"></div>
+<h3>飲水源の登録</h3>
+<input type="text" id="newSourceName" placeholder="飲水源名">
+<input type="number" id="newSourceEvap" placeholder="蒸発補正">
+<select id="newSourceUnit">
+  <option value="g">g</option>
+  <option value="ml">ml</option>
+  <option value="percent">％</option>
+</select>
+<button id="addSourceBtn">追加</button>
+<div id="sourceList"></div>
 
   <h3>データ管理</h3>
   <button id="exportCSV">CSVエクスポート</button>
