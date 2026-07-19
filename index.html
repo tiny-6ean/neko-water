@@ -27,30 +27,54 @@
   <label>猫を選ぶ</label>
   <select id="catSelect"></select>
 
-  <label>飲水源</label>
-  <select id="sourceSelect"></select>
+  <label>飲水スポット</label>
+  <select id="spotSelect"></select>
 
   <label>計量写真（OCR）</label>
   <input type="file" id="photoInput" accept="image/*">
 
-<label>今日の総重量</label>
-<div style="display:flex; gap:8px; align-items:center;">
-  <input type="number" id="weightInput">
-  <select id="weightUnitSelect">
-    <option value="g">g</option>
-    <option value="ml">ml</option>
-  </select>
-</div>
+  <div id="measureWeightBlock">
+    <label>今日の総重量</label>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <input type="number" id="weightInput">
+      <span>g</span>
+    </div>
+  </div>
 
-<label>蒸発補正</label>
-<div style="display:flex; gap:8px; align-items:center;">
-  <input type="number" id="evapInput">
-  <select id="evapUnitSelect">
-    <option value="g">g</option>
-    <option value="ml">ml</option>
-    <option value="percent">％</option>
-  </select>
-</div>
+  <div id="measureVolumeBlock" style="display:none;">
+    <label>今日の残量</label>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <input type="number" id="volumeInput">
+      <span>ml</span>
+    </div>
+  </div>
+
+  <label>蒸発補正</label>
+  <div style="display:flex; gap:8px; align-items:center;">
+    <input type="number" id="evapInput">
+    <select id="evapUnitSelect">
+      <option value="g">g</option>
+      <option value="ml">ml</option>
+      <option value="percent">％</option>
+    </select>
+  </div>
+
+  <h3>ウェットフード</h3>
+
+  <label>商品を選ぶ</label>
+  <select id="wetProductSelect"></select>
+
+  <label>摂取量</label>
+  <div style="display:flex; gap:8px; align-items:center;">
+    <input type="number" id="wetAmountInput" placeholder="g">
+    <span>g</span>
+  </div>
+
+  <label>水増し量（追い水）</label>
+  <div style="display:flex; gap:8px; align-items:center;">
+    <input type="number" id="wetAddWaterInput" placeholder="ml">
+    <span>ml</span>
+  </div>
 
   <label>メモ</label>
   <input type="text" id="memoInput">
@@ -76,7 +100,7 @@
   </div>
 
   <div class="dash-item">
-    <h3>給水器 / 食器の割合</h3>
+    <h3>スポット別割合</h3>
     <div id="ratioBox"></div>
   </div>
 
@@ -92,8 +116,8 @@
   <label>猫を選ぶ</label>
   <select id="graphCat"></select>
 
-  <label>飲水源</label>
-  <select id="graphSource"></select>
+  <label>飲水スポット</label>
+  <select id="graphSpot"></select>
 
   <label>期間</label>
   <select id="graphRange">
@@ -114,7 +138,7 @@
   </div>
 
   <div class="analysis-item">
-    <h3>飲水源ごとの傾向</h3>
+    <h3>スポットごとの傾向</h3>
     <div id="sourceTrend"></div>
   </div>
 
@@ -122,6 +146,49 @@
     <h3>多頭比較</h3>
     <div id="catCompare"></div>
   </div>
+
+  <!-- ▼ 家庭単位の総飲水量グラフ -->
+  <div class="analysis-item">
+    <h3>家庭単位の総飲水量グラフ</h3>
+
+    <label>期間</label>
+    <select id="graphRangeTotal">
+      <option value="7">7日</option>
+      <option value="14">14日</option>
+      <option value="30">30日</option>
+    </select>
+
+    <canvas id="totalDrinkChart" width="600" height="300"></canvas>
+  </div>
+
+  <!-- ▼ スポット別の家庭総量グラフ -->
+  <div class="analysis-item">
+    <h3>スポット別の家庭総量グラフ</h3>
+
+    <label>期間</label>
+    <select id="graphRangeSpotTotal">
+      <option value="7">7日</option>
+      <option value="14">14日</option>
+      <option value="30">30日</option>
+    </select>
+
+    <canvas id="spotTotalChart" width="600" height="300"></canvas>
+  </div>
+
+  <!-- ▼ 家庭 × 個体 ハイブリッド分析（完全版追加） -->
+  <div class="analysis-item">
+    <h3>家庭 × 個体 ハイブリッド分析</h3>
+
+    <label>期間</label>
+    <select id="hybridRange">
+      <option value="7">7日</option>
+      <option value="14">14日</option>
+      <option value="30">30日</option>
+    </select>
+
+    <canvas id="hybridChart" width="600" height="300"></canvas>
+  </div>
+
 </section>
 
 <section id="settings" class="tab-content">
@@ -132,16 +199,37 @@
   <button id="addCatBtn">追加</button>
   <div id="catList"></div>
 
-<h3>飲水源の登録</h3>
-<input type="text" id="newSourceName" placeholder="飲水源名">
-<input type="number" id="newSourceEvap" placeholder="蒸発補正">
-<select id="newSourceUnit">
-  <option value="g">g</option>
-  <option value="ml">ml</option>
-  <option value="percent">％</option>
-</select>
-<button id="addSourceBtn">追加</button>
-<div id="sourceList"></div>
+  <h3>飲水スポットの登録</h3>
+
+  <label>スポット名</label>
+  <input type="text" id="newSpotName" placeholder="例：給水器 / 食器A">
+
+  <label>計測方式</label>
+  <select id="newSpotMethod">
+    <option value="weight">重量（g）</option>
+    <option value="volume">容量（ml）</option>
+  </select>
+
+  <label>初期量</label>
+  <input type="number" id="newSpotInit" placeholder="例：200">
+
+  <label>蒸発補正</label>
+  <input type="number" id="newSpotEvap">
+  <select id="newSpotEvapUnit">
+    <option value="g">g</option>
+    <option value="ml">ml</option>
+    <option value="percent">％</option>
+  </select>
+
+  <button id="addSpotBtn">追加</button>
+  <div id="spotList"></div>
+
+  <h3>ウェット商品の登録</h3>
+  <input type="text" id="newWetName" placeholder="商品名">
+  <input type="number" id="newWetMoisture" placeholder="水分率（例：78）">
+  <span>%</span>
+  <button id="addWetBtn">追加</button>
+  <div id="wetProductList"></div>
 
   <h3>データ管理</h3>
   <button id="exportCSV">CSVエクスポート</button>

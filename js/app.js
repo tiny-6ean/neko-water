@@ -1,6 +1,10 @@
 import { initOCR } from './ocr.js';
 import { initRecord } from './record.js';
 import { initChart } from './chart.js';
+import { initCatCompare } from './chart-compare.js';
+import { initTotalChart } from './chart-total.js';
+import { initSpotTotalChart } from './chart-spot-total.js';
+import { initHybridChart } from './chart-hybrid.js';   // ★ ハイブリッド分析を追加
 import { loadSettings, saveSettings, loadCats, saveCats } from './storage.js';
 
 /* ------------------------------
@@ -63,7 +67,56 @@ function initCatSettings() {
 }
 
 /* ------------------------------
-   飲水源の登録（単位対応）
+   飲水スポットの登録
+------------------------------ */
+function initSpotSettings(settings) {
+  const newSpotName = document.getElementById("newSpotName");
+  const newSpotMethod = document.getElementById("newSpotMethod");
+  const newSpotInit = document.getElementById("newSpotInit");
+  const newSpotEvap = document.getElementById("newSpotEvap");
+  const newSpotEvapUnit = document.getElementById("newSpotEvapUnit");
+  const addSpotBtn = document.getElementById("addSpotBtn");
+  const spotList = document.getElementById("spotList");
+
+  if (!settings.spots) {
+    settings.spots = [];
+    saveSettings(settings);
+  }
+
+  function renderSpots() {
+    spotList.innerHTML = "";
+    settings.spots.forEach(s => {
+      const div = document.createElement("div");
+      div.textContent =
+        `${s.name}（方式: ${s.method}, 初期量: ${s.init}, 蒸発補正: ${s.evap}${s.evapUnit}）`;
+      spotList.appendChild(div);
+    });
+  }
+
+  addSpotBtn.addEventListener("click", () => {
+    const name = newSpotName.value.trim();
+    const method = newSpotMethod.value;
+    const init = Number(newSpotInit.value);
+    const evap = Number(newSpotEvap.value);
+    const evapUnit = newSpotEvapUnit.value;
+
+    if (!name) return;
+
+    settings.spots.push({ name, method, init, evap, evapUnit });
+    saveSettings(settings);
+
+    newSpotName.value = "";
+    newSpotInit.value = "";
+    newSpotEvap.value = "";
+
+    renderSpots();
+  });
+
+  renderSpots();
+}
+
+/* ------------------------------
+   従来の飲水源（後方互換）
 ------------------------------ */
 function initSourceSettings(settings) {
   const newSourceName = document.getElementById("newSourceName");
@@ -100,6 +153,46 @@ function initSourceSettings(settings) {
 }
 
 /* ------------------------------
+   ウェット商品の登録
+------------------------------ */
+function initWetSettings(settings) {
+  const newWetName = document.getElementById("newWetName");
+  const newWetMoisture = document.getElementById("newWetMoisture");
+  const addWetBtn = document.getElementById("addWetBtn");
+  const wetProductList = document.getElementById("wetProductList");
+
+  if (!settings.wetProducts) {
+    settings.wetProducts = [];
+    saveSettings(settings);
+  }
+
+  function renderWetProducts() {
+    wetProductList.innerHTML = "";
+    settings.wetProducts.forEach(p => {
+      const div = document.createElement("div");
+      div.textContent = `${p.name}（水分率: ${p.moisture}%）`;
+      wetProductList.appendChild(div);
+    });
+  }
+
+  addWetBtn.addEventListener("click", () => {
+    const name = newWetName.value.trim();
+    const moisture = Number(newWetMoisture.value);
+
+    if (!name || moisture <= 0 || moisture > 100) return;
+
+    settings.wetProducts.push({ name, moisture });
+    saveSettings(settings);
+
+    newWetName.value = "";
+    newWetMoisture.value = "";
+    renderWetProducts();
+  });
+
+  renderWetProducts();
+}
+
+/* ------------------------------
    DOMContentLoaded
 ------------------------------ */
 document.addEventListener("DOMContentLoaded", async () => {
@@ -107,10 +200,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initTabs();
   initOCR();
-  initRecord(settings);   // 記録タブ（単位対応は record.js 側）
+  initRecord(settings);
   initChart(settings);
   initCatSettings();
+  initSpotSettings(settings);
   initSourceSettings(settings);
+  initWetSettings(settings);
+
+  initCatCompare(settings);      // 多頭比較
+  initTotalChart(settings);      // 家庭総量
+  initSpotTotalChart(settings);  // スポット別家庭総量
+  initHybridChart(settings);     // ★ 家庭 × 個体 ハイブリッド分析（完全版）
 });
 
 /* ------------------------------

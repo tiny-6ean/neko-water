@@ -1,3 +1,6 @@
+/* ------------------------------
+   今日の飲水量（家庭単位）
+------------------------------ */
 export function analyzeToday(logs, settings) {
   const alertBox = document.getElementById("alertBox");
   const todayDrink = document.getElementById("todayDrink");
@@ -7,12 +10,18 @@ export function analyzeToday(logs, settings) {
 
   if (!logs.length) return;
 
-  const latest = logs[logs.length - 1];
+  const today = new Date().toLocaleDateString("ja-JP");
 
-  todayDrink.textContent = `${latest.drink ?? "-"} g`;
+  /* ▼ 今日の総飲水量（スポット＋ウェット） */
+  const todayLogs = logs.filter(l => l.date === today);
+  const todayTotal = todayLogs
+    .map(l => l.finalDrink || 0)
+    .reduce((a, b) => a + b, 0);
 
-  const abnormal = detectAbnormal(logs, latest);
+  todayDrink.textContent = `${todayTotal.toFixed(1)} ml`;
 
+  /* ▼ 異常検知（家庭単位） */
+  const abnormal = detectAbnormal(logs, todayTotal);
   if (abnormal) {
     alertBox.style.display = "block";
     alertBox.textContent = abnormal;
@@ -20,79 +29,99 @@ export function analyzeToday(logs, settings) {
     alertBox.style.display = "none";
   }
 
+  /* ▼ 7日平均（家庭単位） */
   const avg = movingAverage(logs, 7);
-  avg7.textContent = `${avg} g`;
+  avg7.textContent = `${avg} ml`;
 
-  ratioBox.textContent = calcSourceRatio(logs);
+  /* ▼ スポット別割合（給水器 / 食器A / 食器B） */
+  ratioBox.textContent = calcSpotRatio(logs, settings);
 
+  /* ▼ メモ一覧 */
   memoList.innerHTML = logs
     .slice(-10)
     .map(l => `${l.date}：${l.memo || "（なし）"}`)
     .join("<br>");
 }
 
-export function detectAbnormal(logs, latest) {
-  if (!latest.drink) return null;
+/* ------------------------------
+   異常検知（家庭単位）
+------------------------------ */
+export function detectAbnormal(logs, todayTotal) {
+  if (!todayTotal) return null;
 
-  const drink = latest.drink;
+  const prev = logs.length > 1 ? logs[logs.length - 2].finalDrink : null;
 
-  const last7 = logs.slice(-7).map(l => l.drink).filter(v => v !== null);
-  const avg7 = last7.length ? last7.reduce((a, b) => a + b, 0) / last7.length : null;
-
-  const prev = logs.length > 1 ? logs[logs.length - 2].drink : null;
-
-  if (prev !== null && Math.abs(drink - prev) >= 50) {
-    return `⚠ 飲水量が前日比で大きく変化しています（${drink - prev} g）`;
+  if (prev !== null && Math.abs(todayTotal - prev) >= 50) {
+    return `⚠ 飲水量が前日比で大きく変化しています（${(todayTotal - prev).toFixed(1)} ml）`;
   }
 
-  if (avg7 !== null) {
-    const diffRate = (drink - avg7) / avg7;
+  const last7 = logs.slice(-7).map(l => l.finalDrink).filter(v => v !== null);
+  const avg7 = last7.length ? last7.reduce((a, b) => a + b, 0) / last7.length : null;
 
+  if (avg7 !== null) {
+    const diffRate = (todayTotal - avg7) / avg7;
     if (Math.abs(diffRate) >= 0.4) {
-      return `⚠ 飲水量が7日平均から大きく外れています（平均 ${avg7.toFixed(1)} g）`;
+      return `⚠ 飲水量が7日平均から大きく外れています（平均 ${avg7.toFixed(1)} ml）`;
     }
   }
 
-  if (prev !== null && drink < prev - 40) {
-    return `⚠ 飲水量が急激に減少しています（腎臓系の異常の可能性）`;
+  if (prev !== null && todayTotal < prev - 40) {
+    return `⚠ 飲水量が急激に減少しています`;
   }
 
-  if (prev !== null && drink > prev + 60) {
-    return `⚠ 飲水量が急激に増加しています（糖尿病の可能性）`;
+  if (prev !== null && todayTotal > prev + 60) {
+    return `⚠ 飲水量が急激に増加しています`;
   }
 
   return null;
 }
 
+/* ------------------------------
+   7日平均（家庭単位）
+------------------------------ */
 export function movingAverage(logs, days) {
-  const arr = logs.slice(-days).map(l => l.drink).filter(v => v !== null);
+  const arr = logs.slice(-days).map(l => l.finalDrink).filter(v => v !== null);
   if (!arr.length) return "-";
   const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
   return avg.toFixed(1);
 }
 
-export function calcSourceRatio(logs) {
-  const sum = { "給水器": 0, "食器": 0 };
+/* ------------------------------
+   スポット別割合（給水器 / 食器A / 食器B）
+------------------------------ */
+export function calcSpotRatio(logs, settings) {
+  const sum = {};
 
-  logs.forEach(l => {
-    if (!l.drink) return;
-    if (l.source.includes("給水器")) sum["給水器"] += l.drink;
-    else sum["食器"] += l.drink;
+  // スポット名ごとに初期化
+  settings.spots.forEach(s => {
+    sum[s.name] = 0;
   });
 
-  const total = sum["給水器"] + sum["食器"];
+  logs.forEach(l => {
+    if (!l.finalDrink) return;
+    if (sum[l.spot] !== undefined) {
+      sum[l.spot] += l.finalDrink;
+    }
+  });
+
+  const total = Object.values(sum).reduce((a, b) => a + b, 0);
   if (total === 0) return "データなし";
 
-  const rateA = Math.round((sum["給水器"] / total) * 100);
-  const rateB = 100 - rateA;
-
-  return `給水器 ${rateA}% / 食器 ${rateB}%`;
+  return Object.entries(sum)
+    .map(([name, val]) => `${name}: ${Math.round((val / total) * 100)}%`)
+    .join(" / ");
 }
 
+/* ------------------------------
+   ダッシュボード更新
+------------------------------ */
 export function updateDashboard(logs, settings) {
   analyzeToday(logs, settings);
 }
 
+/* ------------------------------
+   月次レポート（スポット対応）
+------------------------------ */
 export function generateMonthlyReport(logs, settings) {
   const monthlyReport = document.getElementById("monthlyReport");
   if (!logs.length) {
@@ -111,58 +140,59 @@ export function generateMonthlyReport(logs, settings) {
   }
 
   const total = monthLogs
-    .map(l => l.drink || 0)
+    .map(l => l.finalDrink || 0)
     .reduce((a, b) => a + b, 0);
 
   const avg = (total / monthLogs.length).toFixed(1);
 
   const abnormalDays = monthLogs
     .map(l => {
-      const abnormal = detectAbnormal(logs, l);
+      const abnormal = detectAbnormal(logs, l.finalDrink);
       return abnormal ? `${l.date}：${abnormal}` : null;
     })
     .filter(v => v !== null);
 
-  const sourceSum = {};
-  settings.sources.forEach(s => (sourceSum[s.name] = 0));
+  /* ▼ スポット別合計 */
+  const spotSum = {};
+  settings.spots.forEach(s => (spotSum[s.name] = 0));
 
   monthLogs.forEach(l => {
-    if (l.drink && sourceSum[l.source] !== undefined) {
-      sourceSum[l.source] += l.drink;
+    if (l.finalDrink && spotSum[l.spot] !== undefined) {
+      spotSum[l.spot] += l.finalDrink;
     }
   });
 
-  const sourceRatio = Object.entries(sourceSum)
-    .map(([name, val]) => `${name}: ${val}g`)
+  const spotRatio = Object.entries(spotSum)
+    .map(([name, val]) => `${name}: ${val.toFixed(1)} ml`)
     .join("<br>");
 
-  const maxDay = monthLogs.reduce((a, b) => (a.drink > b.drink ? a : b));
-  const minDay = monthLogs.reduce((a, b) => (a.drink < b.drink ? a : b));
+  const maxDay = monthLogs.reduce((a, b) => (a.finalDrink > b.finalDrink ? a : b));
+  const minDay = monthLogs.reduce((a, b) => (a.finalDrink < b.finalDrink ? a : b));
 
   monthlyReport.innerHTML = `
     <div class="analysis-item">
       <h3>今月の総飲水量</h3>
-      <div>${total} g</div>
+      <div>${total.toFixed(1)} ml</div>
     </div>
 
     <div class="analysis-item">
       <h3>1日平均</h3>
-      <div>${avg} g</div>
+      <div>${avg} ml</div>
     </div>
 
     <div class="analysis-item">
       <h3>最多飲水日</h3>
-      <div>${maxDay.date}：${maxDay.drink} g</div>
+      <div>${maxDay.date}：${maxDay.finalDrink} ml</div>
     </div>
 
     <div class="analysis-item">
       <h3>最少飲水日</h3>
-      <div>${minDay.date}：${minDay.drink} g</div>
+      <div>${minDay.date}：${minDay.finalDrink} ml</div>
     </div>
 
     <div class="analysis-item">
-      <h3>飲水源ごとの合計</h3>
-      <div>${sourceRatio}</div>
+      <h3>スポットごとの合計</h3>
+      <div>${spotRatio}</div>
     </div>
 
     <div class="analysis-item">
