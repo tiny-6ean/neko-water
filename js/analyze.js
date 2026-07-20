@@ -175,3 +175,31 @@ export function generateMonthlyReport(logs, settings) {
     </div>
   `;
 }
+
+export function updateDashboard(logs, settings, targetDate) {
+  const dashTotalToday = document.getElementById("dashTotalToday");
+  const dashSpotList = document.getElementById("dashSpotList");
+  const dashWetToday = document.getElementById("dashWetToday");
+
+  const todayLogs = logs.filter(l => l.date === targetDate);
+
+  const total = todayLogs
+    .map(l => l.finalDrink || 0)
+    .reduce((a, b) => a + b, 0);
+  dashTotalToday.textContent = `${total.toFixed(1)} ml`;
+
+  dashSpotList.innerHTML = settings.spots
+    .map(s => {
+      const sum = todayLogs
+        .filter(l => l.spot === s.name)
+        .map(l => l.finalDrink || 0)
+        .reduce((a, b) => a + b, 0);
+      return `${s.name}: ${sum.toFixed(1)} ml`;
+    })
+    .join("<br>");
+
+  const wetTotal = todayLogs
+    .map(l => l.wetWater || 0)
+    .reduce((a, b) => a + b, 0);
+  dashWetToday.textContent = `${wetTotal.toFixed(1)} ml`;
+}

@@ -174,8 +174,8 @@ export function initRecord(settings) {
       `ウェット水分 ${entry.wetWater.toFixed(1)}ml / ` +
       `最終 ${entry.finalDrink.toFixed(1)}ml`;
 
-analyzeToday(logs, settings, recordDate.value);
-updateDashboard(logs, settings, recordDate.value);
+    analyzeToday(logs, settings, recordDate.value);
+    updateDashboard(logs, settings, recordDate.value);
 
     weightInput.value = "";
     volumeInput.value = "";
