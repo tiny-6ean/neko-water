@@ -24,11 +24,11 @@
 <section id="record" class="tab-content">
   <h2>記録</h2>
 
+　<label for="recordDate">日付</label>
+　<input type="date" id="recordDate">
+
   <label>猫を選ぶ</label>
   <select id="catSelect"></select>
-
-　<label class="record-date-label">日付</label>
-　<input type="date" id="recordDate" class="record-date-input">
 
   <label>スポット</label>
   <select id="spotSelect"></select>
@@ -44,11 +44,8 @@
   </div>
 
   <label>追加蒸発補正（今日の環境差分）</label>
-  <details class="help">
-    <summary>説明</summary>
-    <p>今日だけ蒸発量が多かった／少なかった場合の“追加補正”です。
-　　普段は0のままで構いません。</p>
-  </details>
+　<span class="help-icon" data-help="今日だけ蒸発量が多かった／少なかった場合の“追加補正”です。
+　普段は0のままで構いません。">？</span>
   <input type="number" id="evapInput">
   <select id="evapUnitSelect">
     <option value="g">g</option>
@@ -177,10 +174,7 @@
   <h2>設定</h2>
 
   <h3>猫の登録</h3>
-  <details class="help">
-    <summary>説明</summary>
-    <p>記録・グラフ・異常検知を猫ごとに分けるための名前です。</p>
-  </details>
+　<span class="help-icon" data-help="記録・グラフ・異常検知を猫ごとに分けるための名前です。">？</span>
   <input type="text" id="newCatName" placeholder="猫の名前">
   <button id="addCatBtn">追加</button>
   <div id="catList"></div>
