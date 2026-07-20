@@ -117,47 +117,6 @@ function initSpotSettings(settings) {
 }
 
 /* ------------------------------
-   従来の飲水源（後方互換）
------------------------------- */
-function initSourceSettings(settings) {
-  if (!settings.sources) {
-    settings.sources = [];
-    saveSettings(settings);
-  }
-  const newSourceName = document.getElementById("newSourceName");
-  const newSourceEvap = document.getElementById("newSourceEvap");
-  const newSourceUnit = document.getElementById("newSourceUnit");
-  const addSourceBtn = document.getElementById("addSourceBtn");
-  const sourceList = document.getElementById("sourceList");
-
-  function renderSources() {
-    sourceList.innerHTML = "";
-    settings.sources.forEach(src => {
-      const div = document.createElement("div");
-      div.textContent = `${src.name}（蒸発補正: ${src.evap}${src.unit}）`;
-      sourceList.appendChild(div);
-    });
-  }
-
-  addSourceBtn.addEventListener("click", () => {
-    const name = newSourceName.value.trim();
-    const evap = Number(newSourceEvap.value);
-    const unit = newSourceUnit.value;
-
-    if (!name) return;
-
-    settings.sources.push({ name, evap, unit });
-    saveSettings(settings);
-
-    newSourceName.value = "";
-    newSourceEvap.value = "";
-    renderSources();
-  });
-
-  renderSources();
-}
-
-/* ------------------------------
    ウェット商品の登録
 ------------------------------ */
 function initWetSettings(settings) {
