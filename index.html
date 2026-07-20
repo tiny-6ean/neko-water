@@ -190,6 +190,25 @@
   <button id="addSpotBtn">追加</button>
   <div id="spotList"></div>
 
+<!-- ▼▼▼ ここに追加 ▼▼▼ -->
+<h3>従来の飲水源（後方互換）</h3>
+
+<label>飲水源名</label>
+<input type="text" id="newSourceName" placeholder="例：旧給水器">
+
+<label>蒸発補正</label>
+<input type="number" id="newSourceEvap">
+<select id="newSourceUnit">
+  <option value="g">g</option>
+  <option value="ml">ml</option>
+  <option value="percent">％</option>
+</select>
+
+<button id="addSourceBtn">追加</button>
+
+<div id="sourceList"></div>
+<!-- ▲▲▲ -->
+
   <h3>ウェット商品の登録</h3>
   <input type="text" id="newWetName" placeholder="商品名">
   <input type="number" id="newWetMoisture" placeholder="水分率（例：78）">
