@@ -1,12 +1,12 @@
-import { initOCR } from './ocr.js';
-import { initRecord } from './record.js';
-import { initChart } from './chart.js';
-import { initCatCompare } from './chart-compare.js';
-import { initTotalChart } from './chart-total.js';
-import { initSpotTotalChart } from './chart-spot-total.js';
-import { initHybridChart } from './chart-hybrid.js';
-import { initDashboardAlerts } from './dashboard-alerts.js';
-import { loadSettings, saveSettings, loadCats, saveCats } from './storage.js';
+import { initOCR } from './js/ocr.js';
+import { initRecord } from './js/record.js';
+import { initChart } from './js/chart.js';
+import { initCatCompare } from './js/chart-compare.js';
+import { initTotalChart } from './js/chart-total.js';
+import { initSpotTotalChart } from './js/chart-spot-total.js';
+import { initHybridChart } from './js/chart-hybrid.js';
+import { initDashboardAlerts } from './js/dashboard-alerts.js';
+import { loadSettings, saveSettings, loadCats, saveCats } from './js/storage.js';
 
 function initTabs() {
   const tabs = document.querySelectorAll(".tabs button");
