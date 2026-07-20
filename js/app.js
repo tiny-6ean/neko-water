@@ -237,6 +237,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initOCR();
   initRecord(settings);
   initChart(settings);
+  initCatCompare(settings);
   initCatSettings();
   initSpotSettings(settings);
   initWetSettings(settings);
