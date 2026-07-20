@@ -71,8 +71,11 @@ export function initRecord(settings) {
     measureWeightBlock.style.display = "none";
     measureVolumeBlock.style.display = "block";
   }
+
+  if (firstSpot) {
   evapInput.value = firstSpot.evap;
   evapUnitSelect.value = firstSpot.evapUnit;
+  }
 
   saveBtn.addEventListener("click", () => {
 
