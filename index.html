@@ -40,7 +40,11 @@
     <input type="number" id="volumeInput">
   </div>
 
-  <label>蒸発補正</label>
+  <label>追加蒸発補正（今日の環境差分）</label>
+    <summary>説明</summary>
+    <p>今日だけ蒸発量が多かった／少なかった場合の“追加補正”です。
+　　普段は0のままで構いません。</p>
+  </details>
   <input type="number" id="evapInput">
   <select id="evapUnitSelect">
     <option value="g">g</option>
@@ -50,8 +54,6 @@
 
   <h3>ウェット</h3>
   <select id="wetProductSelect"></select>
-  <input type="number" id="wetAmountInput">
-  <input type="number" id="wetAddWaterInput">
 
   <label>メモ</label>
   <input type="text" id="memoInput">
@@ -202,7 +204,12 @@
   <label>初期量</label>
   <input type="number" id="newSpotInit" placeholder="例：200">
 
-  <label>蒸発補正</label>
+  <label>基本蒸発量（スポットの標準値）</label>
+  <details class="help">
+    <summary>説明</summary>
+    <p>このスポットが1日で自然に減る量の“基本値”です。
+　　季節や設置場所ごとに測定して登録します。</p>
+  </details>
   <input type="number" id="newSpotEvap">
   <select id="newSpotEvapUnit">
     <option value="g">g</option>
