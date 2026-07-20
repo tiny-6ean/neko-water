@@ -120,6 +120,10 @@ function initSpotSettings(settings) {
    従来の飲水源（後方互換）
 ------------------------------ */
 function initSourceSettings(settings) {
+  if (!settings.sources) {
+    settings.sources = [];
+    saveSettings(settings);
+  }
   const newSourceName = document.getElementById("newSourceName");
   const newSourceEvap = document.getElementById("newSourceEvap");
   const newSourceUnit = document.getElementById("newSourceUnit");
@@ -235,7 +239,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   initChart(settings);
   initCatSettings();
   initSpotSettings(settings);
-  initSourceSettings(settings);
   initWetSettings(settings);
   initThresholdSettings(settings);
 
