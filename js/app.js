@@ -1,12 +1,12 @@
-import { initOCR } from '/neko-water/js/ocr.js';
-import { initRecord } from '/neko-water/js/record.js';
-import { initChart } from '/neko-water/js/chart.js';
-import { initCatCompare } from '/neko-water/js/chart-compare.js';
-import { initTotalChart } from '/neko-water/js/chart-total.js';
-import { initSpotTotalChart } from '/neko-water/js/chart-spot-total.js';
-import { initHybridChart } from '/neko-water/js/chart-hybrid.js';
-import { initDashboardAlerts } from '/neko-water/js/dashboard-alerts.js';
-import { loadSettings, saveSettings, loadCats, saveCats } from '/neko-water/js/storage.js';
+import { initOCR } from './ocr.js';
+import { initRecord } from './record.js';
+import { initChart } from './chart.js';
+import { initCatCompare } from './chart-compare.js';
+import { initTotalChart } from './chart-total.js';
+import { initSpotTotalChart } from './chart-spot-total.js';
+import { initHybridChart } from './chart-hybrid.js';
+import { initDashboardAlerts } from './dashboard-alerts.js';
+import { loadSettings, saveSettings, loadCats, saveCats } from './storage.js';
 
 function initTabs() {
   const tabs = document.querySelectorAll(".tabs button");
