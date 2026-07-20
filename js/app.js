@@ -242,7 +242,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   initSpotSettings(settings);
   initWetSettings(settings);
   initThresholdSettings(settings);
-  initTotalChart(settings);
   initSpotTotalChart(settings);
   initHybridChart(settings);
 
