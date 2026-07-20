@@ -74,8 +74,8 @@ export function initRecord(settings) {
   }
 
   if (firstSpot) {
-  evapInput.value = firstSpot.evap;
-  evapUnitSelect.value = firstSpot.evapUnit;
+    evapInput.value = firstSpot.evap;
+    evapUnitSelect.value = firstSpot.evapUnit;
   }
 
   saveBtn.addEventListener("click", () => {
@@ -174,8 +174,8 @@ export function initRecord(settings) {
       `ウェット水分 ${entry.wetWater.toFixed(1)}ml / ` +
       `最終 ${entry.finalDrink.toFixed(1)}ml`;
 
-    analyzeToday(logs, settings);
-    updateDashboard(logs, settings);
+    analyzeToday(logs, settings, recordDate.value);
+    updateDashboard(logs, settings, recordDate.value);
 
     weightInput.value = "";
     volumeInput.value = "";
