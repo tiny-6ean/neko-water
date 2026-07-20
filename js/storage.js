@@ -1,3 +1,5 @@
+console.log("STORAGE VERSION 999");
+
 const LOG_KEY = "logs";
 
 export function loadLog() {
