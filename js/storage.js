@@ -45,3 +45,9 @@ export function loadSettings() {
 
   return settings;
 }
+
+const SETTINGS_KEY = "settings";
+
+export function saveSettings(settings) {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
