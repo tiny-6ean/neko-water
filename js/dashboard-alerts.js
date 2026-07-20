@@ -1,4 +1,4 @@
-import { loadCats } from './js/storage.js';
+import { loadCats } from './storage.js';
 
 export function initDashboardAlerts(settings) {
   drawDashboardAlerts(settings);

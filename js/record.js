@@ -1,5 +1,5 @@
-import { saveLog, loadLog, loadCats } from './js/storage.js';
-import { analyzeToday, updateDashboard } from './js/analyze.js';
+import { saveLog, loadLog, loadCats } from './storage.js';
+import { analyzeToday, updateDashboard } from './analyze.js';
 
 export function initRecord(settings) {
 
