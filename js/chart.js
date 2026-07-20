@@ -3,7 +3,6 @@ export function initChart(settings) {
   const graphSpot = document.getElementById("graphSpot");
   const graphRange = document.getElementById("graphRange");
 
-  /* ▼ 猫リスト */
   const cats = JSON.parse(localStorage.getItem("cats") || "[]");
   cats.forEach(cat => {
     const opt = document.createElement("option");
@@ -12,7 +11,6 @@ export function initChart(settings) {
     graphCat.appendChild(opt);
   });
 
-  /* ▼ スポットリスト（給水器 / 食器A / 食器B） */
   settings.spots.forEach(s => {
     const opt = document.createElement("option");
     opt.value = s.name;
@@ -37,14 +35,12 @@ export function drawChart() {
   const spot = document.getElementById("graphSpot").value;
   const range = Number(document.getElementById("graphRange").value);
 
-  /* ▼ スポット＋猫でフィルタ */
   const filtered = logs.filter(l => l.cat === cat && l.spot === spot);
   const data = filtered.slice(-range);
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (!data.length) return;
 
-  /* ▼ finalDrink を使う（ウェット水分を含む） */
   const drinks = data.map(d => d.finalDrink ?? 0);
 
   const min = Math.min(...drinks);
@@ -54,14 +50,12 @@ export function drawChart() {
   const w = canvas.width;
   const h = canvas.height;
 
-  /* ▼ 横軸ライン */
   ctx.strokeStyle = "#ccc";
   ctx.beginPath();
   ctx.moveTo(0, h - 20);
   ctx.lineTo(w, h - 20);
   ctx.stroke();
 
-  /* ▼ 折れ線グラフ */
   ctx.strokeStyle = "#4a90e2";
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -76,7 +70,6 @@ export function drawChart() {
 
   ctx.stroke();
 
-  /* ▼ 平均線（finalDrink） */
   const avg = drinks.reduce((a, b) => a + b, 0) / drinks.length;
 
   ctx.strokeStyle = "#7fb3ff";

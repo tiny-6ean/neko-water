@@ -16,14 +16,12 @@ export function drawDashboardAlerts(settings) {
   const THRESH_UP = settings.threshold?.up ?? 40;
   const THRESH_DOWN = settings.threshold?.down ?? -40;
 
-  // 最新日付を取得
   const allDates = Array.from(new Set(logs.map(l => l.date))).sort();
   const latest = allDates[allDates.length - 1];
   const prev = allDates[allDates.length - 2];
 
   if (!latest || !prev) return;
 
-  // 家庭総量
   const totalToday = logs
     .filter(l => l.date === latest)
     .reduce((a, b) => a + (b.finalDrink || 0), 0);
@@ -34,7 +32,6 @@ export function drawDashboardAlerts(settings) {
 
   const diffTotal = totalToday - totalPrev;
 
-  // 理由推定
   function guessReason(date) {
     const todayLogs = logs.filter(l => l.date === date);
     const prevLogs = logs.filter(l => l.date === prev);
@@ -62,7 +59,6 @@ export function drawDashboardAlerts(settings) {
 
   const reason = guessReason(latest);
 
-  // ▼ 警告カード生成
   function addAlert(type, message) {
     const div = document.createElement("div");
     div.className = "alert-item";
@@ -82,7 +78,6 @@ export function drawDashboardAlerts(settings) {
     alertBox.appendChild(div);
   }
 
-  // ▼ 家庭総量の異常判定
   if (diffTotal >= THRESH_UP) {
     addAlert("up", `急増：前日比 +${diffTotal} ml`);
   }
@@ -91,7 +86,6 @@ export function drawDashboardAlerts(settings) {
     addAlert("down", `急減：前日比 ${diffTotal} ml`);
   }
 
-  // ▼ 個体別の異常判定
   cats.forEach(cat => {
     const today = logs.filter(l => l.date === latest && l.cat === cat.name)
       .reduce((a, b) => a + (b.finalDrink || 0), 0);

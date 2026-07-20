@@ -19,12 +19,10 @@ export function initRecord(settings) {
   const saveBtn = document.getElementById("saveBtn");
   const resultBox = document.getElementById("recordResult");
 
-  /* ▼ ウェット関連 */
   const wetProductSelect = document.getElementById("wetProductSelect");
   const wetAmountInput = document.getElementById("wetAmountInput");
   const wetAddWaterInput = document.getElementById("wetAddWaterInput");
 
-  /* 猫リスト */
   const cats = loadCats();
   cats.forEach(cat => {
     const opt = document.createElement("option");
@@ -33,7 +31,6 @@ export function initRecord(settings) {
     catSelect.appendChild(opt);
   });
 
-  /* スポットリスト */
   settings.spots.forEach(s => {
     const opt = document.createElement("option");
     opt.value = s.name;
@@ -41,7 +38,6 @@ export function initRecord(settings) {
     spotSelect.appendChild(opt);
   });
 
-  /* ウェット商品リスト */
   if (settings.wetProducts) {
     settings.wetProducts.forEach(p => {
       const opt = document.createElement("option");
@@ -51,12 +47,10 @@ export function initRecord(settings) {
     });
   }
 
-  /* スポット選択時：計測方式と蒸発補正を反映 */
   spotSelect.addEventListener("change", () => {
     const spot = settings.spots.find(s => s.name === spotSelect.value);
     if (!spot) return;
 
-    // 計測方式に応じて入力欄切り替え
     if (spot.method === "weight") {
       measureWeightBlock.style.display = "block";
       measureVolumeBlock.style.display = "none";
@@ -65,12 +59,10 @@ export function initRecord(settings) {
       measureVolumeBlock.style.display = "block";
     }
 
-    // 蒸発補正反映
     evapInput.value = spot.evap;
     evapUnitSelect.value = spot.evapUnit;
   });
 
-  // 初期スポット反映
   const firstSpot = settings.spots[0];
   if (firstSpot.method === "weight") {
     measureWeightBlock.style.display = "block";
@@ -82,9 +74,6 @@ export function initRecord(settings) {
   evapInput.value = firstSpot.evap;
   evapUnitSelect.value = firstSpot.evapUnit;
 
-  /* ------------------------------
-     記録処理（スポット方式＋ウェット対応）
-  ------------------------------ */
   saveBtn.addEventListener("click", () => {
 
     const cat = catSelect.value;
@@ -96,12 +85,10 @@ export function initRecord(settings) {
 
     const memo = memoInput.value;
 
-    /* ▼ ウェット関連 */
     const wetProduct = wetProductSelect.value;
     const wetAmount = Number(wetAmountInput.value || 0);
     const wetAddWater = Number(wetAddWaterInput.value || 0);
 
-    /* ▼ 計測方式に応じて入力値を取得 */
     let currentValue = 0;
     let unit = "";
 
@@ -120,14 +107,11 @@ export function initRecord(settings) {
 
     const logs = loadLog();
 
-    /* 前回の値（スポット単位） */
     const filtered = logs.filter(l => l.spot === spotName);
     const prev = filtered.length ? filtered[filtered.length - 1].value : null;
 
-    /* 差分 */
     const diff = prev !== null ? currentValue - prev : null;
 
-    /* ▼ 差分飲水量（単位対応） */
     let drink = null;
 
     if (diff !== null) {
@@ -138,7 +122,6 @@ export function initRecord(settings) {
       }
     }
 
-    /* ▼ ウェット水分量 */
     let wetWater = 0;
 
     if (wetProduct && settings.wetProducts) {
@@ -148,7 +131,6 @@ export function initRecord(settings) {
       }
     }
 
-    /* ▼ 最終飲水量（ml に統一） */
     let finalDrink = 0;
 
     if (drink !== null) {
@@ -157,7 +139,6 @@ export function initRecord(settings) {
       finalDrink = wetWater;
     }
 
-    /* 保存データ */
     const entry = {
       cat,
       spot: spotName,
@@ -185,7 +166,6 @@ export function initRecord(settings) {
     logs.push(entry);
     saveLog(logs);
 
-    /* 表示 */
     resultBox.textContent =
       `${entry.date} / ${entry.cat} / ${entry.spot}：` +
       `現在 ${entry.value}${entry.unit} / 差分 ${entry.diff ?? "-"}${entry.unit} / ` +

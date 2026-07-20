@@ -9,7 +9,6 @@ export function drawTotalChart(settings) {
   const canvas = document.getElementById("totalDrinkChart");
   const ctx = canvas.getContext("2d");
 
-  // ▼ 安定動作のためにサイズを明示
   canvas.width = 600;
   canvas.height = 300;
 
@@ -20,7 +19,6 @@ export function drawTotalChart(settings) {
 
   if (!logs.length) return;
 
-  /* ▼ 日付ごとに finalDrink を合計（家庭単位） */
   const dailyMap = {};
 
   logs.forEach(l => {
@@ -44,14 +42,12 @@ export function drawTotalChart(settings) {
   const w = canvas.width;
   const h = canvas.height;
 
-  /* ▼ 横軸ライン */
   ctx.strokeStyle = "#ccc";
   ctx.beginPath();
   ctx.moveTo(0, h - 20);
   ctx.lineTo(w, h - 20);
   ctx.stroke();
 
-  /* ▼ 折れ線グラフ（家庭単位） */
   ctx.strokeStyle = "#e28a4a";
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -66,7 +62,6 @@ export function drawTotalChart(settings) {
 
   ctx.stroke();
 
-  /* ▼ 平均線 */
   const avg = values.reduce((a, b) => a + b, 0) / values.length;
 
   ctx.strokeStyle = "#ffcc99";

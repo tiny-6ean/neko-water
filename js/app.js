@@ -5,12 +5,9 @@ import { initCatCompare } from './chart-compare.js';
 import { initTotalChart } from './chart-total.js';
 import { initSpotTotalChart } from './chart-spot-total.js';
 import { initHybridChart } from './chart-hybrid.js';
-import { initDashboardAlerts } from './dashboard-alerts.js';   // ★ 追加
+import { initDashboardAlerts } from './dashboard-alerts.js';
 import { loadSettings, saveSettings, loadCats, saveCats } from './storage.js';
 
-/* ------------------------------
-   タブ切り替え
------------------------------- */
 function initTabs() {
   const tabs = document.querySelectorAll(".tabs button");
   const contents = document.querySelectorAll(".tab-content");
@@ -33,9 +30,6 @@ function initTabs() {
   contents[0].classList.add("active");
 }
 
-/* ------------------------------
-   猫の登録
------------------------------- */
 function initCatSettings() {
   const newCatName = document.getElementById("newCatName");
   const addCatBtn = document.getElementById("addCatBtn");
@@ -67,9 +61,6 @@ function initCatSettings() {
   renderCats();
 }
 
-/* ------------------------------
-   飲水スポットの登録
------------------------------- */
 function initSpotSettings(settings) {
   const newSpotName = document.getElementById("newSpotName");
   const newSpotMethod = document.getElementById("newSpotMethod");
@@ -116,9 +107,6 @@ function initSpotSettings(settings) {
   renderSpots();
 }
 
-/* ------------------------------
-   ウェット商品の登録
------------------------------- */
 function initWetSettings(settings) {
   const newWetName = document.getElementById("newWetName");
   const newWetMoisture = document.getElementById("newWetMoisture");
@@ -156,9 +144,6 @@ function initWetSettings(settings) {
   renderWetProducts();
 }
 
-/* ------------------------------
-   異常検知の閾値設定
------------------------------- */
 function initThresholdSettings(settings) {
   const upInput = document.getElementById("thresholdUpInput");
   const downInput = document.getElementById("thresholdDownInput");
@@ -186,9 +171,6 @@ function initThresholdSettings(settings) {
   });
 }
 
-/* ------------------------------
-   DOMContentLoaded
------------------------------- */
 document.addEventListener("DOMContentLoaded", async () => {
   const settings = await loadSettings();
 
@@ -201,12 +183,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   initSpotSettings(settings);
   initWetSettings(settings);
   initThresholdSettings(settings);
-  initDashboardAlerts(settings);   // ★ ダッシュボード異常警告カード
+  initDashboardAlerts(settings);
 });
 
-/* ------------------------------
-   Service Worker
------------------------------- */
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/neko-water/service-worker.js");
 }

@@ -27,6 +27,9 @@
   <label>猫を選ぶ</label>
   <select id="catSelect"></select>
 
+　<label class="record-date-label">日付</label>
+　<input type="date" id="recordDate" class="record-date-input">
+
   <label>スポット</label>
   <select id="spotSelect"></select>
 
@@ -41,6 +44,7 @@
   </div>
 
   <label>追加蒸発補正（今日の環境差分）</label>
+  <details class="help">
     <summary>説明</summary>
     <p>今日だけ蒸発量が多かった／少なかった場合の“追加補正”です。
 　　普段は0のままで構いません。</p>
@@ -85,7 +89,6 @@
 <section id="graph" class="tab-content">
   <h2>グラフ</h2>
 
-  <!-- ▼ 通常の飲水グラフ ▼ -->
   <label>猫</label>
   <select id="graphCat"></select>
 
@@ -101,7 +104,6 @@
 
   <canvas id="drinkChart" width="600" height="300"></canvas>
 
-  <!-- ▼▼▼ 猫比較グラフ ▼▼▼ -->
   <h3>猫比較グラフ</h3>
 
   <label>表示範囲（日数）</label>
@@ -112,7 +114,6 @@
   </select>
 
   <canvas id="catCompareChart" width="600" height="300"></canvas>
-  <!-- ▲▲▲ -->
 </section>
 
 <section id="analysis" class="tab-content">
@@ -144,7 +145,6 @@
   </div>
 </section>
 
-<!-- ▼▼▼ 異常点ポップアップ ▼▼▼ -->
 <div id="logModal" class="modal" style="
   display:none;
   position:fixed;
@@ -172,7 +172,6 @@
     <div id="logModalBody"></div>
   </div>
 </div>
-<!-- ▲▲▲ -->
 
 <section id="settings" class="tab-content">
   <h2>設定</h2>

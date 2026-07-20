@@ -19,7 +19,6 @@ export function drawSpotTotalChart(settings) {
 
   if (!logs.length) return;
 
-  /* ▼ スポットごとに日付別の総量を集計 */
   const spotNames = settings.spots.map(s => s.name);
   const spotDaily = {};
 
@@ -35,7 +34,6 @@ export function drawSpotTotalChart(settings) {
     spotDaily[l.spot][l.date] += l.finalDrink;
   });
 
-  /* ▼ 日付リストを統一（家庭全体で使われた日付） */
   const allDates = Array.from(
     new Set(
       logs.map(l => l.date)
@@ -45,7 +43,6 @@ export function drawSpotTotalChart(settings) {
   const dateList = allDates.slice(-range);
   if (!dateList.length) return;
 
-  /* ▼ グラフ描画準備 */
   const w = canvas.width;
   const h = canvas.height;
 
@@ -55,10 +52,8 @@ export function drawSpotTotalChart(settings) {
   ctx.lineTo(w, h - 20);
   ctx.stroke();
 
-  /* ▼ 色（スポットごと） */
   const colors = ["#4a90e2", "#e24a4a", "#4ae27f", "#e2c14a", "#9b4ae2"];
 
-  /* ▼ 全スポットの値から min/max を決定 */
   const allValues = [];
 
   spotNames.forEach(name => {
@@ -72,7 +67,6 @@ export function drawSpotTotalChart(settings) {
   const max = Math.max(...allValues);
   const diff = max - min || 1;
 
-  /* ▼ スポットごとに折れ線を描画 */
   spotNames.forEach((name, idx) => {
     ctx.strokeStyle = colors[idx % colors.length];
     ctx.lineWidth = 2;
@@ -90,7 +84,6 @@ export function drawSpotTotalChart(settings) {
 
     ctx.stroke();
 
-    /* ▼ 凡例 */
     ctx.fillStyle = colors[idx % colors.length];
     ctx.fillRect(10, 10 + idx * 20, 12, 12);
 

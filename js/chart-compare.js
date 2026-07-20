@@ -22,7 +22,6 @@ export function drawCatCompare(settings) {
 
   if (!logs.length || !cats.length) return;
 
-  /* ▼ 猫ごとに finalDrink を集計 */
   const catData = {};
 
   cats.forEach(cat => {
@@ -30,7 +29,6 @@ export function drawCatCompare(settings) {
     catData[cat.name] = filtered.slice(-range).map(l => l.finalDrink || 0);
   });
 
-  /* ▼ グラフ描画準備 */
   const w = canvas.width;
   const h = canvas.height;
 
@@ -40,16 +38,13 @@ export function drawCatCompare(settings) {
   ctx.lineTo(w, h - 20);
   ctx.stroke();
 
-  /* ▼ 色リスト（猫ごとに割り当て） */
   const colors = ["#4a90e2", "#e24a4a", "#4ae27f", "#e2c14a", "#9b4ae2"];
 
-  /* ▼ 最大値・最小値を全猫で計算 */
   const allValues = Object.values(catData).flat();
   const min = Math.min(...allValues);
   const max = Math.max(...allValues);
   const diff = max - min || 1;
 
-  /* ▼ 猫ごとに折れ線グラフを描画 */
   Object.entries(catData).forEach(([catName, arr], idx) => {
     ctx.strokeStyle = colors[idx % colors.length];
     ctx.lineWidth = 2;
@@ -65,7 +60,6 @@ export function drawCatCompare(settings) {
 
     ctx.stroke();
 
-    /* ▼ 凡例 */
     ctx.fillStyle = colors[idx % colors.length];
     ctx.fillRect(10, 10 + idx * 20, 12, 12);
 

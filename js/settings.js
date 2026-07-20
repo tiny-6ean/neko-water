@@ -50,7 +50,6 @@ export function initSourceSettings(settings) {
   if (savedSources) {
     settings.sources = savedSources;
   } else {
-    // 初期値を保存
     localStorage.setItem("sources", JSON.stringify(settings.sources));
   }
 

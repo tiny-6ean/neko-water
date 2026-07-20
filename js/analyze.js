@@ -1,6 +1,3 @@
-/* ------------------------------
-   今日の飲水量（家庭単位）
------------------------------- */
 export function analyzeToday(logs, settings) {
   const alertBox = document.getElementById("alertBox");
   const todayDrink = document.getElementById("todayDrink");
@@ -12,7 +9,6 @@ export function analyzeToday(logs, settings) {
 
   const today = new Date().toLocaleDateString("ja-JP");
 
-  /* ▼ 今日の総飲水量（スポット＋ウェット） */
   const todayLogs = logs.filter(l => l.date === today);
   const todayTotal = todayLogs
     .map(l => l.finalDrink || 0)
@@ -20,7 +16,6 @@ export function analyzeToday(logs, settings) {
 
   todayDrink.textContent = `${todayTotal.toFixed(1)} ml`;
 
-  /* ▼ 異常検知（家庭単位） */
   const abnormal = detectAbnormal(logs, todayTotal);
   if (abnormal) {
     alertBox.style.display = "block";
@@ -29,23 +24,17 @@ export function analyzeToday(logs, settings) {
     alertBox.style.display = "none";
   }
 
-  /* ▼ 7日平均（家庭単位） */
   const avg = movingAverage(logs, 7);
   avg7.textContent = `${avg} ml`;
 
-  /* ▼ スポット別割合（給水器 / 食器A / 食器B） */
   ratioBox.textContent = calcSpotRatio(logs, settings);
 
-  /* ▼ メモ一覧 */
   memoList.innerHTML = logs
     .slice(-10)
     .map(l => `${l.date}：${l.memo || "（なし）"}`)
     .join("<br>");
 }
 
-/* ------------------------------
-   異常検知（家庭単位）
------------------------------- */
 export function detectAbnormal(logs, todayTotal) {
   if (!todayTotal) return null;
 
@@ -76,9 +65,6 @@ export function detectAbnormal(logs, todayTotal) {
   return null;
 }
 
-/* ------------------------------
-   7日平均（家庭単位）
------------------------------- */
 export function movingAverage(logs, days) {
   const arr = logs.slice(-days).map(l => l.finalDrink).filter(v => v !== null);
   if (!arr.length) return "-";
@@ -86,13 +72,9 @@ export function movingAverage(logs, days) {
   return avg.toFixed(1);
 }
 
-/* ------------------------------
-   スポット別割合（給水器 / 食器A / 食器B）
------------------------------- */
 export function calcSpotRatio(logs, settings) {
   const sum = {};
 
-  // スポット名ごとに初期化
   settings.spots.forEach(s => {
     sum[s.name] = 0;
   });
@@ -112,16 +94,10 @@ export function calcSpotRatio(logs, settings) {
     .join(" / ");
 }
 
-/* ------------------------------
-   ダッシュボード更新
------------------------------- */
 export function updateDashboard(logs, settings) {
   analyzeToday(logs, settings);
 }
 
-/* ------------------------------
-   月次レポート（スポット対応）
------------------------------- */
 export function generateMonthlyReport(logs, settings) {
   const monthlyReport = document.getElementById("monthlyReport");
   if (!logs.length) {
@@ -152,7 +128,6 @@ export function generateMonthlyReport(logs, settings) {
     })
     .filter(v => v !== null);
 
-  /* ▼ スポット別合計 */
   const spotSum = {};
   settings.spots.forEach(s => (spotSum[s.name] = 0));
 
