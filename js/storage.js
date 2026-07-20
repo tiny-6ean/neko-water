@@ -1,3 +1,13 @@
+const CATS_KEY = "cats";
+
+export function loadCats() {
+  return JSON.parse(localStorage.getItem(CATS_KEY) || "[]");
+}
+
+export function saveCats(cats) {
+  localStorage.setItem(CATS_KEY, JSON.stringify(cats));
+}
+
 export function loadSettings() {
   const raw = localStorage.getItem(SETTINGS_KEY);
 
