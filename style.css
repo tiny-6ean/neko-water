@@ -163,37 +163,25 @@ canvas {
   margin-top: 20px;
 }
 
-.settings-help {
+.help-icon {
   font-size: 12px;
-  color: #666;
-  margin: 4px 0 0 0;
-  padding: 0;
-}
-
-.settings-help summary {
+  color: #bbb;
+  margin-left: 4px;
   cursor: pointer;
+}
+
+#recordDate {
+  margin-bottom: 8px;
+}
+
+.help-tip {
+  position: fixed;
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 6px 8px;
   font-size: 12px;
-  color: #999;
-  list-style: none;
-}
-
-.settings-help summary::-webkit-details-marker {
-  display: none;
-}
-
-.settings-help summary::before {
-  content: "？";
-  font-weight: bold;
-  margin-right: 4px;
-  color: #bbb;
-}
-
-.settings-help[open] summary::before {
-  content: "▼";
-  color: #bbb;
-}
-
-.settings-help p {
-  margin: 4px 0 0 16px;
-  padding: 0;
+  color: #555;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 9999;
 }

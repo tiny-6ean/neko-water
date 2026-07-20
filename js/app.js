@@ -189,3 +189,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/neko-water/service-worker.js");
 }
+
+document.addEventListener("click", e => {
+  if (!e.target.classList.contains("help-icon")) return;
+
+  const text = e.target.dataset.help;
+
+  const tip = document.createElement("div");
+  tip.className = "help-tip";
+  tip.textContent = text;
+
+  document.body.appendChild(tip);
+
+  const rect = e.target.getBoundingClientRect();
+  tip.style.left = rect.right + 8 + "px";
+  tip.style.top = rect.top + "px";
+
+  setTimeout(() => tip.remove(), 3000);
+});
