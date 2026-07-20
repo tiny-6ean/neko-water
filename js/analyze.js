@@ -93,10 +93,6 @@ export function calcSpotRatio(logs, settings) {
     .join(" / ");
 }
 
-export function updateDashboard(logs, settings, targetDate) {
-  analyzeToday(logs, settings, targetDate);
-}
-
 export function generateMonthlyReport(logs, settings) {
   const monthlyReport = document.getElementById("monthlyReport");
   if (!logs.length) {
