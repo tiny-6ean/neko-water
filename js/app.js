@@ -203,3 +203,89 @@ document.addEventListener("click", e => {
 
   setTimeout(() => tip.remove(), 3000);
 });
+
+function renderRecordList() {
+  const records = JSON.parse(localStorage.getItem("records") || "[]");
+  const box = document.getElementById("recordResult");
+  box.innerHTML = "";
+
+  records.forEach((rec, index) => {
+    const div = document.createElement("div");
+    div.textContent = `${rec.date} / ${rec.cat} / ${rec.spot} / ${rec.amount}ml`;
+    const btn = document.createElement("button");
+    btn.textContent = "編集";
+    btn.onclick = () => loadRecordForEdit(index);
+    div.appendChild(btn);
+    box.appendChild(div);
+  });
+}
+
+let editingIndex = null;
+
+function loadRecordForEdit(index) {
+  const records = JSON.parse(localStorage.getItem("records") || "[]");
+  const rec = records[index];
+  editingIndex = index;
+
+  document.getElementById("recordDate").value = rec.date;
+  document.getElementById("catSelect").value = rec.cat;
+  document.getElementById("spotSelect").value = rec.spot;
+  document.getElementById("weightInput").value = rec.weight || "";
+  document.getElementById("volumeInput").value = rec.volume || "";
+  document.getElementById("evapInput").value = rec.evap || "";
+  document.getElementById("evapUnitSelect").value = rec.evapUnit || "g";
+  document.getElementById("wetProductSelect").value = rec.wetProduct || "";
+  document.getElementById("wetAmountInput").value = rec.wetAmount || "";
+  document.getElementById("wetAddWaterInput").value = rec.wetAddWater || "";
+  document.getElementById("memoInput").value = rec.memo || "";
+
+  document.getElementById("saveBtn").textContent = "編集を保存";
+
+  const btn = document.getElementById("saveBtn");
+  btn.textContent = "編集を保存";
+  btn.style.background = "#ffcc66";
+
+  document.getElementById("editStatus").textContent =
+    `編集モード：${rec.date} / ${rec.cat} / ${rec.spot}`;
+}
+
+if (editingIndex !== null) {
+  records[editingIndex] = newRec;
+  editingIndex = null;
+
+  saveBtn.textContent = "保存";
+  saveBtn.style.background = "";
+
+  document.getElementById("editStatus").textContent = "";
+}
+
+document.getElementById("saveBtn").onclick = () => {
+  const records = JSON.parse(localStorage.getItem("records") || "[]");
+
+  const newRec = {
+    date: recordDate.value,
+    cat: catSelect.value,
+    spot: spotSelect.value,
+    weight: weightInput.value,
+    volume: volumeInput.value,
+    evap: evapInput.value,
+    evapUnit: evapUnitSelect.value,
+    wetProduct: wetProductSelect.value,
+    wetAmount: wetAmountInput.value,
+    wetAddWater: wetAddWaterInput.value,
+    memo: memoInput.value
+  };
+
+  if (editingIndex !== null) {
+    // 編集モード
+    records[editingIndex] = newRec;
+    editingIndex = null;
+    saveBtn.textContent = "保存";
+  } else {
+    // 新規
+    records.push(newRec);
+  }
+
+  localStorage.setItem("records", JSON.stringify(records));
+  renderRecordList();
+};
