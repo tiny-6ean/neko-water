@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>猫の飲水管理</title>
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8">
+  <title>猫の飲水管理</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
 </head>
 
 <body>
@@ -23,7 +23,7 @@
 
 <section id="record" class="tab-content">
   <h2>記録</h2>
-  <div id="editStatus" style="color:#c66; font-weight:bold;"></div>
+  <div id="editStatus" class="edit-status"></div>
 
   <label for="recordDate">日付</label>
   <input type="date" id="recordDate">
@@ -39,15 +39,18 @@
     <input type="number" id="weightInput">
   </div>
 
-<label>写真から読み取る</label>
-<input type="file" id="photoInput" accept="image/*">
+  <label>写真から読み取る</label>
+  <input type="file" id="photoInput" accept="image/*">
 
   <div id="measureVolumeBlock">
     <label>容量（ml）</label>
     <input type="number" id="volumeInput">
   </div>
 
-  <label>追加蒸発補正（今日の環境差分）<span class="help-icon" title="今日だけ蒸発量が多かった／少なかった場合の“追加補正”です。普段は0のままで構いません。">？</span></label>
+  <label>
+    追加蒸発補正（今日の環境差分）
+    <span class="help-icon" data-help="今日だけ蒸発量が多かった／少なかった場合の“追加補正”です。普段は0のままで構いません。">？</span>
+  </label>
   <input type="number" id="evapInput">
   <select id="evapUnitSelect">
     <option value="g">g</option>
@@ -58,17 +61,16 @@
   <h3>ウェット</h3>
   <select id="wetProductSelect"></select>
 
-<label>ウェット量（g）</label>
-<input type="number" id="wetAmountInput">
+  <label>ウェット量（g）</label>
+  <input type="number" id="wetAmountInput">
 
-<label>加水量（ml）</label>
-<input type="number" id="wetAddWaterInput">
+  <label>加水量（ml）</label>
+  <input type="number" id="wetAddWaterInput">
 
   <label>メモ</label>
   <input type="text" id="memoInput">
 
   <button id="saveBtn">保存</button>
-
   <div id="recordResult"></div>
 </section>
 
@@ -150,29 +152,9 @@
   </div>
 </section>
 
-<div id="logModal" class="modal" style="
-  display:none;
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background:rgba(0,0,0,0.4);
-  z-index:9999;
-">
-  <div class="modal-content" style="
-    background:#fff;
-    width:80%;
-    max-width:500px;
-    margin:80px auto;
-    padding:20px;
-    border-radius:8px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.2);
-  ">
-    <span id="logModalClose" class="close" style="
-      float:right;
-      font-size:24px;
-      cursor:pointer;
-    ">&times;</span>
-
+<div id="logModal" class="modal">
+  <div class="modal-content">
+    <span id="logModalClose" class="close">&times;</span>
     <h3>この日の記録</h3>
     <div id="logModalBody"></div>
   </div>
@@ -181,12 +163,13 @@
 <section id="settings" class="tab-content">
   <h2>設定</h2>
 
-  <h3>猫の登録<span class="help-icon" title="記録・グラフ・異常検知を猫ごとに分けるための名前です。">？</span></h3>
+  <h3>猫の登録 <span class="help-icon" data-help="記録・グラフ・異常検知を猫ごとに分けるための名前です。">？</span></h3>
   <input type="text" id="newCatName" placeholder="猫の名前">
   <button id="addCatBtn">追加</button>
   <div id="catList"></div>
 
-  <h3>飲水スポットの登録<span class="help-icon" title="給水器や食器など、猫が飲む水の置き場所を登録します。weight＝重さで計測、volume＝入れた量と残量で計測します。">？</span></h3>
+  <h3>飲水スポットの登録 <span class="help-icon" data-help="給水器や食器など、猫が飲む水の置き場所を登録します。">？</span></h3>
+
   <label>スポット名</label>
   <input type="text" id="newSpotName" placeholder="例：給水器 / 食器A">
 
@@ -199,7 +182,10 @@
   <label>初期量</label>
   <input type="number" id="newSpotInit" placeholder="例：200">
 
-  <label>基本蒸発量（スポットの標準値）<span class="help-icon" title="このスポットが1日で自然に減る量の“基本値”です。季節や設置場所ごとに測定して登録します。">？</span></label>
+  <label>
+    基本蒸発量（スポットの標準値）
+    <span class="help-icon" data-help="このスポットが1日で自然に減る量の“基本値”です。">？</span>
+  </label>
   <input type="number" id="newSpotEvap">
   <select id="newSpotEvapUnit">
     <option value="g">g</option>
@@ -210,7 +196,7 @@
   <button id="addSpotBtn">追加</button>
   <div id="spotList"></div>
 
-  <h3>ウェット商品の登録<span class="help-icon" title="ウェットフードの水分量を自動計算するための設定です。水分率を登録すると、食べた量から水分量を算出します。">？</span></h3>
+  <h3>ウェット商品の登録 <span class="help-icon" data-help="ウェットフードの水分量を自動計算するための設定です。">？</span></h3>
   <input type="text" id="newWetName" placeholder="商品名">
   <input type="number" id="newWetMoisture" placeholder="水分率（例：78）">
   <span>%</span>
@@ -222,7 +208,7 @@
   <button id="exportJSON">バックアップ(JSON)</button>
   <input type="file" id="importJSON" accept="application/json">
 
-  <h3>異常検知の設定<span class="help-icon" title="前日比で急に増えた／減った飲水量を検知するための閾値です。猫の普段の飲水量に合わせて調整してください。">？</span></h3>
+  <h3>異常検知の設定 <span class="help-icon" data-help="前日比で急に増えた／減った飲水量を検知するための閾値です。">？</span></h3>
   <label>急増閾値（ml）</label>
   <input type="number" id="thresholdUpInput" placeholder="例：40">
 

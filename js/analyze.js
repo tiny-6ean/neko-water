@@ -23,8 +23,7 @@ export function analyzeToday(logs, settings, targetDate) {
     alertBox.style.display = "none";
   }
 
-  const avg = movingAverage(logs, 7);
-  avg7.textContent = `${avg} ml`;
+  avg7.textContent = `${movingAverage(logs, 7)} ml`;
 
   ratioBox.textContent = calcSpotRatio(logs, settings);
 
@@ -39,20 +38,23 @@ export function detectAbnormal(logs, todayTotal) {
 
   const prev = logs.length > 1 ? logs[logs.length - 2].finalDrink : null;
 
+  /* 前日比 ±50ml */
   if (prev !== null && Math.abs(todayTotal - prev) >= 50) {
-    return `⚠ 飲水量が前日比で大きく変化しています（${(todayTotal - prev).toFixed(1)} ml）`;
+    return `⚠ 前日比で大きく変化（${(todayTotal - prev).toFixed(1)} ml）`;
   }
 
+  /* 7日平均 ±40% */
   const last7 = logs.slice(-7).map(l => l.finalDrink).filter(v => v !== null);
   const avg7 = last7.length ? last7.reduce((a, b) => a + b, 0) / last7.length : null;
 
   if (avg7 !== null) {
     const diffRate = (todayTotal - avg7) / avg7;
     if (Math.abs(diffRate) >= 0.4) {
-      return `⚠ 飲水量が7日平均から大きく外れています（平均 ${avg7.toFixed(1)} ml）`;
+      return `⚠ 7日平均から大きく外れています（平均 ${avg7.toFixed(1)} ml）`;
     }
   }
 
+  /* 急減・急増 */
   if (prev !== null && todayTotal < prev - 40) {
     return `⚠ 飲水量が急激に減少しています`;
   }
@@ -74,13 +76,10 @@ export function movingAverage(logs, days) {
 export function calcSpotRatio(logs, settings) {
   const sum = {};
 
-  settings.spots.forEach(s => {
-    sum[s.name] = 0;
-  });
+  settings.spots.forEach(s => sum[s.name] = 0);
 
   logs.forEach(l => {
-    if (!l.finalDrink) return;
-    if (sum[l.spot] !== undefined) {
+    if (l.finalDrink && sum[l.spot] !== undefined) {
       sum[l.spot] += l.finalDrink;
     }
   });
@@ -104,16 +103,12 @@ export function generateMonthlyReport(logs, settings) {
   const ym = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, "0")}`;
 
   const monthLogs = logs.filter(l => l.date.startsWith(ym));
-
   if (!monthLogs.length) {
     monthlyReport.textContent = "今月のデータがありません";
     return;
   }
 
-  const total = monthLogs
-    .map(l => l.finalDrink || 0)
-    .reduce((a, b) => a + b, 0);
-
+  const total = monthLogs.map(l => l.finalDrink || 0).reduce((a, b) => a + b, 0);
   const avg = (total / monthLogs.length).toFixed(1);
 
   const abnormalDays = monthLogs
@@ -124,7 +119,7 @@ export function generateMonthlyReport(logs, settings) {
     .filter(v => v !== null);
 
   const spotSum = {};
-  settings.spots.forEach(s => (spotSum[s.name] = 0));
+  settings.spots.forEach(s => spotSum[s.name] = 0);
 
   monthLogs.forEach(l => {
     if (l.finalDrink && spotSum[l.spot] !== undefined) {
@@ -179,9 +174,7 @@ export function updateDashboard(logs, settings, targetDate) {
 
   const todayLogs = logs.filter(l => l.date === targetDate);
 
-  const total = todayLogs
-    .map(l => l.finalDrink || 0)
-    .reduce((a, b) => a + b, 0);
+  const total = todayLogs.map(l => l.finalDrink || 0).reduce((a, b) => a + b, 0);
   dashTotalToday.textContent = `${total.toFixed(1)} ml`;
 
   dashSpotList.innerHTML = settings.spots
@@ -194,8 +187,6 @@ export function updateDashboard(logs, settings, targetDate) {
     })
     .join("<br>");
 
-  const wetTotal = todayLogs
-    .map(l => l.wetWater || 0)
-    .reduce((a, b) => a + b, 0);
+  const wetTotal = todayLogs.map(l => l.wetWater || 0).reduce((a, b) => a + b, 0);
   dashWetToday.textContent = `${wetTotal.toFixed(1)} ml`;
 }

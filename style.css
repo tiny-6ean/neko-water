@@ -108,7 +108,7 @@ button:hover {
   font-size: 14px;
 }
 
-.dash-item {
+.dash-block {
   background: #ffffff;
   padding: 16px;
   border-radius: 10px;
@@ -116,7 +116,7 @@ button:hover {
   border: 1px solid #e5e5e5;
 }
 
-.dash-item h3 {
+.dash-block h3 {
   margin: 0 0 8px 0;
   font-size: 15px;
   color: #444;
@@ -132,7 +132,7 @@ button:hover {
   display: none;
 }
 
-.analysis-item {
+.analysis-block {
   background: #ffffff;
   padding: 16px;
   border-radius: 10px;
@@ -140,12 +140,12 @@ button:hover {
   border: 1px solid #e5e5e5;
 }
 
-.analysis-item h3 {
+.analysis-block h3 {
   margin: 0 0 8px 0;
   font-size: 15px;
 }
 
-#catList, #sourceList {
+#catList {
   margin-top: 12px;
   font-size: 14px;
   background: #fff;

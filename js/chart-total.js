@@ -1,7 +1,8 @@
+import { loadLog } from "./storage.js";
+
 export function initTotalChart(settings) {
   const rangeSelect = document.getElementById("graphRangeTotal");
   rangeSelect.addEventListener("change", () => drawTotalChart(settings));
-
   drawTotalChart(settings);
 }
 
@@ -12,19 +13,16 @@ export function drawTotalChart(settings) {
   canvas.width = 600;
   canvas.height = 300;
 
-  const logs = JSON.parse(localStorage.getItem("logs") || "[]");
+  const logs = loadLog();
   const range = Number(document.getElementById("graphRangeTotal").value);
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   if (!logs.length) return;
 
   const dailyMap = {};
-
   logs.forEach(l => {
     if (!l.finalDrink) return;
-    if (!dailyMap[l.date]) dailyMap[l.date] = 0;
-    dailyMap[l.date] += l.finalDrink;
+    dailyMap[l.date] = (dailyMap[l.date] || 0) + l.finalDrink;
   });
 
   const dailyList = Object.entries(dailyMap)
@@ -42,6 +40,9 @@ export function drawTotalChart(settings) {
   const w = canvas.width;
   const h = canvas.height;
 
+  const xPos = (i, len) => (w - 20) * (i / Math.max(len - 1, 1)) + 10;
+  const yPos = val => h - 20 - ((val - min) / diff) * (h - 40);
+
   ctx.strokeStyle = "#ccc";
   ctx.beginPath();
   ctx.moveTo(0, h - 20);
@@ -53,8 +54,8 @@ export function drawTotalChart(settings) {
   ctx.beginPath();
 
   dailyList.forEach((d, i) => {
-    const x = (w - 20) * (i / Math.max(dailyList.length - 1, 1)) + 10;
-    const y = h - 20 - ((d.total - min) / diff) * (h - 40);
+    const x = xPos(i, dailyList.length);
+    const y = yPos(d.total);
 
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
@@ -63,12 +64,11 @@ export function drawTotalChart(settings) {
   ctx.stroke();
 
   const avg = values.reduce((a, b) => a + b, 0) / values.length;
+  const avgY = yPos(avg);
 
   ctx.strokeStyle = "#ffcc99";
   ctx.setLineDash([4, 4]);
   ctx.beginPath();
-
-  const avgY = h - 20 - ((avg - min) / diff) * (h - 40);
   ctx.moveTo(10, avgY);
   ctx.lineTo(w - 10, avgY);
   ctx.stroke();

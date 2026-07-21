@@ -35,17 +35,17 @@ export function initRecord(settings) {
       div.textContent =
         `${entry.date} / ${entry.cat} / ${entry.spot}：${entry.finalDrink.toFixed(1)}ml`;
 
-const editBtn = document.createElement("button");
-editBtn.textContent = "編集";
-editBtn.className = "record-btn";
-editBtn.onclick = () => loadLogForEdit(index);
-div.appendChild(editBtn);
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "編集";
+      editBtn.className = "record-btn";
+      editBtn.onclick = () => loadLogForEdit(index);
+      div.appendChild(editBtn);
 
-const delBtn = document.createElement("button");
-delBtn.textContent = "削除";
-delBtn.className = "record-btn";
-delBtn.onclick = () => deleteLog(index);
-div.appendChild(delBtn);
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "削除";
+      delBtn.className = "record-btn";
+      delBtn.onclick = () => deleteLog(index);
+      div.appendChild(delBtn);
 
       resultBox.appendChild(div);
     });
@@ -94,8 +94,7 @@ div.appendChild(delBtn);
     renderLogList();
   }
 
-  const cats = loadCats();
-  cats.forEach(cat => {
+  loadCats().forEach(cat => {
     const opt = document.createElement("option");
     opt.value = cat.name;
     opt.textContent = cat.name;
@@ -135,26 +134,24 @@ div.appendChild(delBtn);
   });
 
   const firstSpot = settings.spots[0];
-  if (firstSpot && firstSpot.method === "weight") {
-    measureWeightBlock.style.display = "block";
-    measureVolumeBlock.style.display = "none";
-  } else {
-    measureWeightBlock.style.display = "none";
-    measureVolumeBlock.style.display = "block";
-  }
-
   if (firstSpot) {
+    measureWeightBlock.style.display =
+      firstSpot.method === "weight" ? "block" : "none";
+    measureVolumeBlock.style.display =
+      firstSpot.method === "volume" ? "block" : "none";
+
     evapInput.value = firstSpot.evap;
     evapUnitSelect.value = firstSpot.evapUnit;
   }
 
   saveBtn.addEventListener("click", () => {
-
     const cat = catSelect.value;
     const spotName = spotSelect.value;
     const spot = settings.spots.find(s => s.name === spotName);
+
     const evap = Number(evapInput.value || 0);
     const evapUnit = evapUnitSelect.value;
+
     const memo = memoInput.value;
     const wetProduct = wetProductSelect.value;
     const wetAmount = Number(wetAmountInput.value || 0);
@@ -177,19 +174,19 @@ div.appendChild(delBtn);
     }
 
     const logs = loadLog();
+    const initValue = spot.init;
 
-const initValue = spot.init;
+    const diff = initValue - currentValue;
 
-let drink = initValue - currentValue;
+    let drink = diff;
 
-if (evapUnit === "g" || evapUnit === "ml") {
-  drink -= evap;
-} else if (evapUnit === "percent") {
-  drink -= (drink * (evap / 100));
-}
+    if (evapUnit === "g" || evapUnit === "ml") {
+      drink -= evap;
+    } else if (evapUnit === "percent") {
+      drink -= (drink * (evap / 100));
+    }
 
     let wetWater = 0;
-
     if (wetProduct && settings.wetProducts) {
       const product = settings.wetProducts.find(p => p.name === wetProduct);
       if (product) {
@@ -197,7 +194,7 @@ if (evapUnit === "g" || evapUnit === "ml") {
       }
     }
 
-    let finalDrink = drink !== null ? drink + wetWater : wetWater;
+    const finalDrink = drink + wetWater;
 
     const entry = {
       cat,
@@ -236,7 +233,6 @@ if (evapUnit === "g" || evapUnit === "ml") {
     saveLog(logs);
 
     renderLogList();
-
     analyzeToday(logs, settings, recordDate.value);
     updateDashboard(logs, settings, recordDate.value);
 

@@ -1,4 +1,4 @@
-import { loadCats } from './storage.js';
+import { loadCats, loadLog } from "./storage.js";
 
 export function initHybridChart(settings) {
   const rangeSelect = document.getElementById("hybridRange");
@@ -13,7 +13,7 @@ export function drawHybridChart(settings) {
   canvas.width = 600;
   canvas.height = 300;
 
-  const logs = JSON.parse(localStorage.getItem("logs") || "[]");
+  const logs = loadLog();
   const cats = loadCats();
   const range = Number(document.getElementById("hybridRange").value);
 
@@ -29,17 +29,16 @@ export function drawHybridChart(settings) {
   const dailyTotal = {};
   logs.forEach(l => {
     if (!l.finalDrink) return;
-    if (!dailyTotal[l.date]) dailyTotal[l.date] = 0;
-    dailyTotal[l.date] += l.finalDrink;
+    dailyTotal[l.date] = (dailyTotal[l.date] || 0) + l.finalDrink;
   });
 
   const dailyCats = {};
   cats.forEach(c => dailyCats[c.name] = {});
+
   logs.forEach(l => {
     if (!l.finalDrink) return;
     if (!dailyCats[l.cat]) return;
-    if (!dailyCats[l.cat][l.date]) dailyCats[l.cat][l.date] = 0;
-    dailyCats[l.cat][l.date] += l.finalDrink;
+    dailyCats[l.cat][l.date] = (dailyCats[l.cat][l.date] || 0) + l.finalDrink;
   });
 
   const allDates = Array.from(new Set(logs.map(l => l.date))).sort();
@@ -59,6 +58,9 @@ export function drawHybridChart(settings) {
   const w = canvas.width;
   const h = canvas.height;
 
+  const xPos = (i, len) => (w - 20) * (i / Math.max(len - 1, 1)) + 10;
+  const yPos = val => h - 20 - ((val - min) / diff) * (h - 40);
+
   ctx.strokeStyle = "#ccc";
   ctx.beginPath();
   ctx.moveTo(0, h - 20);
@@ -73,8 +75,9 @@ export function drawHybridChart(settings) {
 
   dateList.forEach((d, i) => {
     const val = dailyTotal[d] || 0;
-    const x = (w - 20) * (i / Math.max(dateList.length - 1, 1)) + 10;
-    const y = h - 20 - ((val - min) / diff) * (h - 40);
+    const x = xPos(i, dateList.length);
+    const y = yPos(val);
+
     totalPoints.push({ x, y, val, date: d });
 
     if (i === 0) ctx.moveTo(x, y);
@@ -87,7 +90,7 @@ export function drawHybridChart(settings) {
     const todayLogs = logs.filter(l => l.date === date);
     const prevLogs = logs.filter(l => l.date === allDates[allDates.indexOf(date) - 1]);
 
-    let reasons = [];
+    const reasons = [];
 
     const wetToday = todayLogs.reduce((a, b) => a + (b.wetAmount || 0), 0);
     const wetPrev = prevLogs.reduce((a, b) => a + (b.wetAmount || 0), 0);
@@ -97,9 +100,9 @@ export function drawHybridChart(settings) {
     const addPrev = prevLogs.reduce((a, b) => a + (b.wetAddWater || 0), 0);
     if (addToday > addPrev) reasons.push("追い水増加");
 
-    const spotToday = todayLogs.map(l => l.spot);
-    const spotPrev = prevLogs.map(l => l.spot);
-    if (spotToday.join(",") !== spotPrev.join(",")) reasons.push("スポット変更");
+    const spotToday = todayLogs.map(l => l.spot).join(",");
+    const spotPrev = prevLogs.map(l => l.spot).join(",");
+    if (spotToday !== spotPrev) reasons.push("スポット変更");
 
     const evapToday = todayLogs.reduce((a, b) => a + (b.evap || 0), 0);
     const evapPrev = prevLogs.reduce((a, b) => a + (b.evap || 0), 0);
@@ -119,9 +122,7 @@ export function drawHybridChart(settings) {
       ctx.fill();
 
       abnormalPoints.push({
-        x: totalPoints[i].x,
-        y: totalPoints[i].y,
-        date: totalPoints[i].date,
+        ...totalPoints[i],
         reason,
         type: "up"
       });
@@ -134,9 +135,7 @@ export function drawHybridChart(settings) {
       ctx.fill();
 
       abnormalPoints.push({
-        x: totalPoints[i].x,
-        y: totalPoints[i].y,
-        date: totalPoints[i].date,
+        ...totalPoints[i],
         reason,
         type: "down"
       });
@@ -154,8 +153,8 @@ export function drawHybridChart(settings) {
 
     dateList.forEach((d, i) => {
       const val = dailyCats[c.name][d] || 0;
-      const x = (w - 20) * (i / Math.max(dateList.length - 1, 1)) + 10;
-      const y = h - 20 - ((val - min) / diff) * (h - 40);
+      const x = xPos(i, dateList.length);
+      const y = yPos(val);
 
       catPoints.push({ x, y, val, date: d });
 
@@ -176,9 +175,7 @@ export function drawHybridChart(settings) {
         ctx.fill();
 
         abnormalPoints.push({
-          x: catPoints[i].x,
-          y: catPoints[i].y,
-          date: catPoints[i].date,
+          ...catPoints[i],
           reason,
           type: "up"
         });
@@ -191,9 +188,7 @@ export function drawHybridChart(settings) {
         ctx.fill();
 
         abnormalPoints.push({
-          x: catPoints[i].x,
-          y: catPoints[i].y,
-          date: catPoints[i].date,
+          ...catPoints[i],
           reason,
           type: "down"
         });

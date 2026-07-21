@@ -28,13 +28,8 @@ function initTabs() {
       btn.classList.add("active");
 
       contents.forEach(c => {
-        c.classList.remove("active");
-        if (c.id === target) {
-          c.classList.add("active");
-        }
+        c.classList.toggle("active", c.id === target);
       });
-
-      initHelpIcons();
     });
   });
 
@@ -50,7 +45,6 @@ function initCatSettings() {
   function renderCats() {
     const cats = loadCats();
     catList.innerHTML = "";
-
     cats.forEach(cat => {
       const div = document.createElement("div");
       div.textContent = cat.name;
@@ -82,10 +76,8 @@ function initSpotSettings(settings) {
   const addSpotBtn = document.getElementById("addSpotBtn");
   const spotList = document.getElementById("spotList");
 
-  if (!settings.spots) {
-    settings.spots = [];
-    saveSettings(settings);
-  }
+  settings.spots ??= [];
+  saveSettings(settings);
 
   function renderSpots() {
     spotList.innerHTML = "";
@@ -99,14 +91,16 @@ function initSpotSettings(settings) {
 
   addSpotBtn.addEventListener("click", () => {
     const name = newSpotName.value.trim();
-    const method = newSpotMethod.value;
-    const init = Number(newSpotInit.value);
-    const evap = Number(newSpotEvap.value);
-    const evapUnit = newSpotEvapUnit.value;
-
     if (!name) return;
 
-    settings.spots.push({ name, method, init, evap, evapUnit });
+    settings.spots.push({
+      name,
+      method: newSpotMethod.value,
+      init: Number(newSpotInit.value),
+      evap: Number(newSpotEvap.value),
+      evapUnit: newSpotEvapUnit.value
+    });
+
     saveSettings(settings);
 
     newSpotName.value = "";
@@ -125,10 +119,8 @@ function initWetSettings(settings) {
   const addWetBtn = document.getElementById("addWetBtn");
   const wetProductList = document.getElementById("wetProductList");
 
-  if (!settings.wetProducts) {
-    settings.wetProducts = [];
-    saveSettings(settings);
-  }
+  settings.wetProducts ??= [];
+  saveSettings(settings);
 
   function renderWetProducts() {
     wetProductList.innerHTML = "";
@@ -142,7 +134,6 @@ function initWetSettings(settings) {
   addWetBtn.addEventListener("click", () => {
     const name = newWetName.value.trim();
     const moisture = Number(newWetMoisture.value);
-
     if (!name || moisture <= 0 || moisture > 100) return;
 
     settings.wetProducts.push({ name, moisture });
@@ -161,10 +152,8 @@ function initThresholdSettings(settings) {
   const downInput = document.getElementById("thresholdDownInput");
   const saveBtn = document.getElementById("saveThresholdBtn");
 
-  if (!settings.threshold) {
-    settings.threshold = { up: 40, down: -40 };
-    saveSettings(settings);
-  }
+  settings.threshold ??= { up: 40, down: -40 };
+  saveSettings(settings);
 
   upInput.value = settings.threshold.up;
   downInput.value = settings.threshold.down;
@@ -172,11 +161,9 @@ function initThresholdSettings(settings) {
   saveBtn.addEventListener("click", () => {
     const up = Number(upInput.value);
     const down = Number(downInput.value);
-
     if (isNaN(up) || isNaN(down)) return;
 
-    settings.threshold.up = up;
-    settings.threshold.down = down;
+    settings.threshold = { up, down };
     saveSettings(settings);
 
     alert("閾値を保存しました");
@@ -187,6 +174,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const settings = await loadSettings();
 
   initTabs();
+  initHelpIcons();
+
   initOCR();
   initRecord(settings);
   initChart(settings);
@@ -196,6 +185,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   initWetSettings(settings);
   initThresholdSettings(settings);
   initDashboardAlerts(settings);
-
-  initHelpIcons();
 });

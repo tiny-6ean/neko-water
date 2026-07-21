@@ -12,10 +12,11 @@ export function initOCR() {
     resultBox.textContent = "画像から数字を読み取り中…";
 
     try {
-      const { data: { text } } = await Tesseract.recognize(file, 'eng', {
+      const { data: { text } } = await Tesseract.recognize(file, "eng", {
         logger: m => console.log(m)
       });
 
+      // 最初に見つかった数字を抽出
       const match = text.match(/\d+/);
 
       if (match) {

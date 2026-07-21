@@ -1,6 +1,7 @@
+import { loadCats, loadLog } from "./storage.js";
+
 export function initCatCompare(settings) {
   const graphRange = document.getElementById("graphRangeCompare");
-  const canvas = document.getElementById("catCompareChart");
 
   graphRange.addEventListener("change", () => {
     drawCatCompare(settings);
@@ -13,9 +14,8 @@ export function drawCatCompare(settings) {
   const canvas = document.getElementById("catCompareChart");
   const ctx = canvas.getContext("2d");
 
-  const logs = JSON.parse(localStorage.getItem("logs") || "[]");
-  const cats = JSON.parse(localStorage.getItem("cats") || "[]");
-
+  const logs = loadLog();
+  const cats = loadCats();
   const range = Number(document.getElementById("graphRangeCompare").value);
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -45,14 +45,17 @@ export function drawCatCompare(settings) {
   const max = Math.max(...allValues);
   const diff = max - min || 1;
 
+  const xPos = (i, len) => (w - 20) * (i / Math.max(len - 1, 1)) + 10;
+  const yPos = val => h - 20 - ((val - min) / diff) * (h - 40);
+
   Object.entries(catData).forEach(([catName, arr], idx) => {
     ctx.strokeStyle = colors[idx % colors.length];
     ctx.lineWidth = 2;
     ctx.beginPath();
 
     arr.forEach((val, i) => {
-      const x = (w - 20) * (i / Math.max(arr.length - 1, 1)) + 10;
-      const y = h - 20 - ((val - min) / diff) * (h - 40);
+      const x = xPos(i, arr.length);
+      const y = yPos(val);
 
       if (i === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);

@@ -1,10 +1,11 @@
+import { loadCats, loadLog } from "./storage.js";
+
 export function initChart(settings) {
   const graphCat = document.getElementById("graphCat");
   const graphSpot = document.getElementById("graphSpot");
   const graphRange = document.getElementById("graphRange");
 
-  const cats = JSON.parse(localStorage.getItem("cats") || "[]");
-  cats.forEach(cat => {
+  loadCats().forEach(cat => {
     const opt = document.createElement("option");
     opt.value = cat.name;
     opt.textContent = cat.name;
@@ -29,7 +30,7 @@ export function drawChart() {
   const canvas = document.getElementById("drinkChart");
   const ctx = canvas.getContext("2d");
 
-  const logs = JSON.parse(localStorage.getItem("logs") || "[]");
+  const logs = loadLog();
 
   const cat = document.getElementById("graphCat").value;
   const spot = document.getElementById("graphSpot").value;
@@ -50,6 +51,9 @@ export function drawChart() {
   const w = canvas.width;
   const h = canvas.height;
 
+  const xPos = i => (w - 20) * (i / Math.max(data.length - 1, 1)) + 10;
+  const yPos = val => h - 20 - ((val - min) / diff) * (h - 40);
+
   ctx.strokeStyle = "#ccc";
   ctx.beginPath();
   ctx.moveTo(0, h - 20);
@@ -61,8 +65,8 @@ export function drawChart() {
   ctx.beginPath();
 
   data.forEach((d, i) => {
-    const x = (w - 20) * (i / Math.max(data.length - 1, 1)) + 10;
-    const y = h - 20 - ((d.finalDrink - min) / diff) * (h - 40);
+    const x = xPos(i);
+    const y = yPos(d.finalDrink);
 
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
@@ -71,12 +75,11 @@ export function drawChart() {
   ctx.stroke();
 
   const avg = drinks.reduce((a, b) => a + b, 0) / drinks.length;
+  const avgY = yPos(avg);
 
   ctx.strokeStyle = "#7fb3ff";
   ctx.setLineDash([4, 4]);
   ctx.beginPath();
-
-  const avgY = h - 20 - ((avg - min) / diff) * (h - 40);
   ctx.moveTo(10, avgY);
   ctx.lineTo(w - 10, avgY);
   ctx.stroke();
