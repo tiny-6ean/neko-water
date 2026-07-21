@@ -8,6 +8,14 @@ import { initHybridChart } from './chart-hybrid.js';
 import { initDashboardAlerts } from './dashboard-alerts.js';
 import { loadSettings, saveSettings, loadCats, saveCats } from './storage.js';
 
+function initHelpIcons() {
+  document.querySelectorAll('.help-icon').forEach(icon => {
+    icon.addEventListener('click', () => {
+      alert(icon.dataset.help);
+    });
+  });
+}
+
 function initTabs() {
   const tabs = document.querySelectorAll(".tabs button");
   const contents = document.querySelectorAll(".tab-content");
@@ -25,6 +33,8 @@ function initTabs() {
           c.classList.add("active");
         }
       });
+
+      initHelpIcons();
     });
   });
 
@@ -186,4 +196,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   initWetSettings(settings);
   initThresholdSettings(settings);
   initDashboardAlerts(settings);
+
+  initHelpIcons();
 });
