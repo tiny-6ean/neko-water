@@ -194,3 +194,12 @@ canvas {
   margin-left: 6px;
   width: auto;
 }
+
+#photoInput {
+  width: auto;
+  padding: 4px;
+  background: #eee;
+  border: 1px solid #ccc;
+  color: #333;
+}
+
