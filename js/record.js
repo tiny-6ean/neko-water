@@ -178,20 +178,15 @@ div.appendChild(delBtn);
 
     const logs = loadLog();
 
-    const filtered = logs.filter(l => l.spot === spotName);
-    const prev = filtered.length ? filtered[filtered.length - 1].value : null;
+const initValue = spot.init;
 
-    const diff = prev !== null ? currentValue - prev : null;
+let drink = initValue - currentValue;
 
-    let drink = null;
-
-    if (diff !== null) {
-      if (evapUnit === "g" || evapUnit === "ml") {
-        drink = diff - evap;
-      } else if (evapUnit === "percent") {
-        drink = diff - (diff * (evap / 100));
-      }
-    }
+if (evapUnit === "g" || evapUnit === "ml") {
+  drink -= evap;
+} else if (evapUnit === "percent") {
+  drink -= (drink * (evap / 100));
+}
 
     let wetWater = 0;
 
