@@ -24,6 +24,75 @@ export function initRecord(settings) {
   const wetAmountInput = document.getElementById("wetAmountInput");
   const wetAddWaterInput = document.getElementById("wetAddWaterInput");
 
+  let editingIndex = null;
+
+  function renderLogList() {
+    const logs = loadLog();
+    resultBox.innerHTML = "";
+
+    logs.forEach((entry, index) => {
+      const div = document.createElement("div");
+      div.textContent =
+        `${entry.date} / ${entry.cat} / ${entry.spot}：${entry.finalDrink.toFixed(1)}ml`;
+
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "編集";
+      editBtn.onclick = () => loadLogForEdit(index);
+      div.appendChild(editBtn);
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "削除";
+      delBtn.style.marginLeft = "8px";
+      delBtn.onclick = () => deleteLog(index);
+      div.appendChild(delBtn);
+
+      resultBox.appendChild(div);
+    });
+  }
+
+  function loadLogForEdit(index) {
+    const logs = loadLog();
+    const entry = logs[index];
+    editingIndex = index;
+
+    recordDate.value = entry.date;
+    catSelect.value = entry.cat;
+    spotSelect.value = entry.spot;
+
+    if (entry.method === "weight") {
+      weightInput.value = entry.value;
+      volumeInput.value = "";
+    } else {
+      volumeInput.value = entry.value;
+      weightInput.value = "";
+    }
+
+    evapInput.value = entry.evap;
+    evapUnitSelect.value = entry.evapUnit;
+
+    wetProductSelect.value = entry.wetProduct || "";
+    wetAmountInput.value = entry.wetAmount || "";
+    wetAddWaterInput.value = entry.wetAddWater || "";
+    memoInput.value = entry.memo || "";
+
+    saveBtn.textContent = "編集を保存";
+    saveBtn.style.background = "#ffcc66";
+  }
+
+  function deleteLog(index) {
+    const logs = loadLog();
+    logs.splice(index, 1);
+    saveLog(logs);
+
+    if (editingIndex === index) {
+      editingIndex = null;
+      saveBtn.textContent = "保存";
+      saveBtn.style.background = "";
+    }
+
+    renderLogList();
+  }
+
   const cats = loadCats();
   cats.forEach(cat => {
     const opt = document.createElement("option");
@@ -132,13 +201,7 @@ export function initRecord(settings) {
       }
     }
 
-    let finalDrink = 0;
-
-    if (drink !== null) {
-      finalDrink = drink + wetWater;
-    } else {
-      finalDrink = wetWater;
-    }
+    let finalDrink = drink !== null ? drink + wetWater : wetWater;
 
     const entry = {
       cat,
@@ -164,15 +227,19 @@ export function initRecord(settings) {
       memo
     };
 
-    logs.push(entry);
+    if (editingIndex !== null) {
+      logs[editingIndex] = entry;
+      editingIndex = null;
+
+      saveBtn.textContent = "保存";
+      saveBtn.style.background = "";
+    } else {
+      logs.push(entry);
+    }
+
     saveLog(logs);
 
-    resultBox.textContent =
-      `${entry.date} / ${entry.cat} / ${entry.spot}：` +
-      `現在 ${entry.value}${entry.unit} / 差分 ${entry.diff ?? "-"}${entry.unit} / ` +
-      `蒸発補正 ${entry.evap}${entry.evapUnit} / ` +
-      `ウェット水分 ${entry.wetWater.toFixed(1)}ml / ` +
-      `最終 ${entry.finalDrink.toFixed(1)}ml`;
+    renderLogList();
 
     analyzeToday(logs, settings, recordDate.value);
     updateDashboard(logs, settings, recordDate.value);
@@ -183,4 +250,6 @@ export function initRecord(settings) {
     wetAmountInput.value = "";
     wetAddWaterInput.value = "";
   });
+
+  renderLogList();
 }
