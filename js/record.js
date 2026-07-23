@@ -1,6 +1,20 @@
 import { saveLog, loadLog, loadCats } from './storage.js';
 import { analyzeToday, updateDashboard } from './analyze.js';
 
+function renderDailyLog(date) {
+  const logs = loadLog().filter(l => l.date === date);
+  const box = document.getElementById("logModalBody");
+
+  if (!logs.length) {
+    box.innerHTML = "<div>記録なし</div>";
+    return;
+  }
+
+  box.innerHTML = logs.map(l =>
+    `<div>${l.spot}：${l.finalDrink.toFixed(1)}ml</div>`
+  ).join("");
+}
+
 export function initRecord(settings) {
   const recordDate = document.getElementById("recordDate");
 
@@ -238,6 +252,8 @@ export function initRecord(settings) {
     renderLogList();
     analyzeToday(logs, settings, recordDate.value);
     updateDashboard(logs, settings, recordDate.value);
+
+    renderDailyLog(recordDate.value);
 
     weightInput.value = "";
     volumeInput.value = "";
