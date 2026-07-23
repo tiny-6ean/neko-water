@@ -185,8 +185,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   initWetSettings(settings);
   initThresholdSettings(settings);
   initDashboardAlerts(settings);
-
-  updateDashboard(loadLog(), settings, new Date().toISOString().slice(0, 10));
 });
 
-updateDashboard(loadLog(), settings, new Date().toISOString().slice(0, 10));
