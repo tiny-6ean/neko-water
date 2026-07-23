@@ -217,7 +217,10 @@ export function initRecord(settings) {
       wetAddWater,
       wetWater,
 
-      memo
+      memo,
+
+      roomTemp: Number(document.getElementById("roomTempInput").value),
+      waterTemp: Number(document.getElementById("waterTempInput").value),
     };
 
     if (editingIndex !== null) {
