@@ -70,15 +70,12 @@
   <label>メモ</label>
   <input type="text" id="memoInput">
 
-<div class="dash-block">
-  <h3>室温</h3>
-  <div id="dashRoomTemp">-</div>
-</div>
+  <!-- 室温・水温入力欄 -->
+  <label>室温（℃）</label>
+  <input type="number" id="roomTempInput" placeholder="室温を入力">
 
-<div class="dash-block">
-  <h3>水温</h3>
-  <div id="dashWaterTemp">-</div>
-</div>
+  <label>水温（℃）</label>
+  <input type="number" id="waterTempInput" placeholder="水温を入力">
 
   <button id="saveBtn">保存</button>
   <div id="recordResult"></div>
@@ -100,6 +97,16 @@
   <div class="dash-block">
     <h3>ウェット水分量</h3>
     <div id="dashWetToday">-</div>
+  </div>
+
+  <div class="dash-block">
+    <h3>室温</h3>
+    <div id="dashRoomTemp">-</div>
+  </div>
+
+  <div class="dash-block">
+    <h3>水温</h3>
+    <div id="dashWaterTemp">-</div>
   </div>
 </section>
 

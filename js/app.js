@@ -190,4 +190,3 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 updateDashboard(loadLog(), settings, new Date().toISOString().slice(0, 10));
-
