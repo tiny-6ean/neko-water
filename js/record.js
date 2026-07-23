@@ -3,18 +3,24 @@ import { analyzeToday, updateDashboard } from './analyze.js';
 
 function renderDailyLog(date) {
   const logs = loadLog().filter(l => l.date === date);
-  const box = document.getElementById("logModalBody");
+  const modalBox = document.getElementById("logModalBody");
+  const dashBox = document.getElementById("dashDailyRecord");
 
   if (!logs.length) {
-    box.innerHTML = "<div>記録なし</div>";
+    const html = "<div>記録なし</div>";
+    modalBox.innerHTML = html;
+    dashBox.innerHTML = html;
     return;
   }
 
-  box.innerHTML = logs.map(l =>
+  const html = logs.map(l =>
     `<div>${l.spot}：${l.finalDrink.toFixed(1)}ml</div>
      <div>室温：${l.roomTemp ?? "-"}℃</div>
      <div>水温：${l.waterTemp ?? "-"}℃</div>`
   ).join("");
+
+  modalBox.innerHTML = html;
+  dashBox.innerHTML = html;
 }
 
 export function initRecord(settings) {
@@ -258,7 +264,6 @@ export function initRecord(settings) {
 
     renderLogList();
     analyzeToday(logs, settings, recordDate.value);
-
     renderDailyLog(recordDate.value);
 
     weightInput.value = "";
